@@ -230,7 +230,7 @@ import opendatasets as od
 # On Windows, if prompted for a "kaggle.json" file location, it typically expects
 # it at C:\Users\<YourUsername>\.kaggle\kaggle.json — download this API key file
 # from your Kaggle account settings page ("Create New API Token") beforehand.
-dataset_url = 'https://www.kaggle.com/c/newyork-city-taxi-fare-prediction/overview'
+dataset_url = 'https://www.kaggle.com/c/new-york-city-taxi-fare-prediction/overview'
 od.download(dataset_url)
 
 data_dir = './new-york-city-taxi-fare-prediction'
