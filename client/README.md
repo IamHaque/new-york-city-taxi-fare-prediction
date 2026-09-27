@@ -99,6 +99,7 @@ src/
 ## Backend Contract
 
 **POST `/predict`**
+
 ```json
 // Request
 {
@@ -120,6 +121,7 @@ src/
 ```
 
 **POST `/parse-trip`** (optional, Epic 5)
+
 ```json
 // Request
 { "description": "2 people from Times Square to JFK Friday at 6pm" }

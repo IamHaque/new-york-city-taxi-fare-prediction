@@ -6,7 +6,9 @@ import type { TripInput } from '@/types/trip';
  *
  * Example: "2026-01-07T14:30" (a Wednesday) → { hour: 14, day_of_week_num: 2, month: 1 }
  */
-export function decomposeDateTime(value: string): Pick<TripInput, 'hour' | 'day_of_week_num' | 'month'> {
+export function decomposeDateTime(
+  value: string
+): Pick<TripInput, 'hour' | 'day_of_week_num' | 'month'> {
   const date = new Date(value);
 
   const hour = date.getHours(); // 0-23

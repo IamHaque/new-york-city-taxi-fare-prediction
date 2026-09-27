@@ -4,48 +4,59 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 239 84% 67%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 239 84% 67%;
-    --radius: 0.5rem;
+    /* LIGHT THEME — an original extension of the reference, not from the source file.
+       Design logic: warm off-white background (not clinical pure white) to match the dark
+       theme's warm off-black; white cards sit lighter than the page background, mirroring how
+       the dark theme's card (#1b1e26) sits lighter than its background (#12141a); primary/
+       destructive/success are darkened versions of the dark theme's hues (same family, tuned
+       for AA contrast against light surfaces). */
+    --background: #f7f6f3;
+    --foreground: #1b1e26;
+    --card: #ffffff;
+    --card-foreground: #1b1e26;
+    --popover: #ffffff;
+    --popover-foreground: #1b1e26;
+    --primary: #6552d6;
+    --primary-foreground: #ffffff;
+    --secondary: #eeece6;
+    --secondary-foreground: #1b1e26;
+    --muted: #eeece6;
+    --muted-foreground: #6b6f7a;
+    --accent: #eeece6;
+    --accent-foreground: #1b1e26;
+    --destructive: #c8442f;
+    --destructive-foreground: #ffffff;
+    --success: #2f8f5b;
+    --success-foreground: #ffffff;
+    --border: #dcdad3;
+    --input: #dcdad3;
+    --ring: #6552d6;
+    --radius: 0.375rem; /* 6px flat — shared with dark mode, matches reference's --radius exactly */
   }
 
+  /* DARK THEME — extracted directly from Bingo_Bust_-_Tracker.html, unchanged from the source. */
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 239 84% 67%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 239 84% 67%;
+    --background: #12141a;
+    --foreground: #edebe3;
+    --card: #1b1e26;
+    --card-foreground: #edebe3;
+    --popover: #1b1e26;
+    --popover-foreground: #edebe3;
+    --primary: #7c6fe0;
+    --primary-foreground: #ffffff;
+    --secondary: #232733;
+    --secondary-foreground: #edebe3;
+    --muted: #232733;
+    --muted-foreground: #8d919c;
+    --accent: #232733;
+    --accent-foreground: #edebe3;
+    --destructive: #e15b4e;
+    --destructive-foreground: #ffffff;
+    --success: #4fa97a;
+    --success-foreground: #12141a;
+    --border: #2e323d;
+    --input: #2e323d;
+    --ring: #7c6fe0;
   }
 }
 
@@ -55,6 +66,8 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
   }
 }

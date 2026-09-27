@@ -2,17 +2,23 @@ import { useState, useEffect, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { MapPin } from 'lucide-react';
 import type { TripInput, ParsedTripDetails } from '@/types/trip';
 import { validateTripInputs } from '@/utils/validators';
 import { decomposeDateTime } from '@/utils/dateTimeUtils';
 import { enrichParsedTripWithCoordinates } from '@/utils/landmarks';
+import { PassengerStepper } from '@/components/shared/PassengerStepper';
+import { InputModeToggle } from '@/components/shared/InputModeToggle';
+import { NaturalLanguageInput } from '@/components/NaturalLanguageInput/NaturalLanguageInput';
 
 interface TripFormProps {
   onSubmit: (trip: TripInput) => void;
   disabled?: boolean;
   initialValues?: Partial<ParsedTripDetails>;
+  mode: 'manual' | 'describe';
+  onModeChange: (mode: 'manual' | 'describe') => void;
+  onParsedTrip?: (trip: ParsedTripDetails) => void;
 }
 
 /** Internal form state includes datetime-local string for the input */
@@ -75,8 +81,16 @@ function parsedTripToFormState(parsed: ParsedTripDetails): FormState {
  * TripForm - collects and validates trip input from the user.
  * Calls onSubmit(trip: TripInput) prop when valid; does NOT call the API itself.
  * Accepts initialValues from natural language parsing to pre-fill fields.
+ * Supports two modes: 'manual' (coordinate fields) and 'describe' (natural language).
  */
-export function TripForm({ onSubmit, disabled, initialValues }: TripFormProps) {
+export function TripForm({
+  onSubmit,
+  disabled,
+  initialValues,
+  mode,
+  onModeChange,
+  onParsedTrip,
+}: TripFormProps) {
   const [values, setValues] = useState<FormState>({
     pickup_lat: '',
     pickup_lon: '',
@@ -89,9 +103,11 @@ export function TripForm({ onSubmit, disabled, initialValues }: TripFormProps) {
     passenger_count: 1,
   });
   const [errors, setErrors] = useState<Partial<Record<keyof TripInput, string>>>({});
-  const [touched, setTouched] = useState<Partial<Record<keyof TripInput | 'datetime', boolean>>>({});
+  const [touched, setTouched] = useState<Partial<Record<keyof TripInput | 'datetime', boolean>>>(
+    {}
+  );
 
-// Apply initial values when they change
+  // Apply initial values when they change
   useEffect(() => {
     if (initialValues && Object.keys(initialValues).length > 0) {
       const enriched = enrichParsedTripWithCoordinates(initialValues as ParsedTripDetails);
@@ -124,7 +140,9 @@ export function TripForm({ onSubmit, disabled, initialValues }: TripFormProps) {
       const { hour, day_of_week_num, month } = decomposeDateTime(value);
       setValues((prev) => ({ ...prev, hour, day_of_week_num, month }));
       if (touched.hour || touched.day_of_week_num || touched.month) {
-        const validation = validateTripInputs(toTripInputPartial({ ...values, hour, day_of_week_num, month }));
+        const validation = validateTripInputs(
+          toTripInputPartial({ ...values, hour, day_of_week_num, month })
+        );
         setErrors(validation);
       }
     }
@@ -162,147 +180,146 @@ export function TripForm({ onSubmit, disabled, initialValues }: TripFormProps) {
     }
   }
 
+  // Level 2 card: primary surface with top accent border
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Trip Details</CardTitle>
+    <Card className="rounded-lg border border-t-2 border-border border-t-primary">
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div className="flex items-center gap-2">
+          <MapPin className="h-5 w-5 text-muted-foreground" />
+          <CardTitle className="text-2xl font-semibold">Trip Details</CardTitle>
+        </div>
+        <InputModeToggle mode={mode} onChange={onModeChange} disabled={disabled} />
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="pickup_lat">Pickup Latitude</Label>
-              <Input
-                id="pickup_lat"
-                type="number"
-                step="0.000001"
-                placeholder="40.7580"
-                value={values.pickup_lat ?? ''}
-                onChange={(e) => handleChange('pickup_lat', parseFloat(e.target.value) || 0)}
-                onBlur={() => handleBlur('pickup_lat')}
-                disabled={disabled}
-                aria-invalid={!!errors.pickup_lat}
-                aria-describedby={errors.pickup_lat ? 'pickup_lat_error' : undefined}
-              />
-              {errors.pickup_lat && (
-                <p id="pickup_lat_error" className="text-sm text-destructive" role="alert">
-                  {errors.pickup_lat}
-                </p>
-              )}
+        {mode === 'manual' ? (
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="pickup_lat">Pickup Latitude</Label>
+                <Input
+                  id="pickup_lat"
+                  type="number"
+                  step="0.000001"
+                  placeholder="40.7580"
+                  value={values.pickup_lat ?? ''}
+                  onChange={(e) => handleChange('pickup_lat', parseFloat(e.target.value) || 0)}
+                  onBlur={() => handleBlur('pickup_lat')}
+                  disabled={disabled}
+                  aria-invalid={!!errors.pickup_lat}
+                  aria-describedby={errors.pickup_lat ? 'pickup_lat_error' : undefined}
+                />
+                {errors.pickup_lat && (
+                  <p id="pickup_lat_error" className="text-sm text-destructive" role="alert">
+                    {errors.pickup_lat}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="pickup_lon">Pickup Longitude</Label>
+                <Input
+                  id="pickup_lon"
+                  type="number"
+                  step="0.000001"
+                  placeholder="-73.9855"
+                  value={values.pickup_lon ?? ''}
+                  onChange={(e) => handleChange('pickup_lon', parseFloat(e.target.value) || 0)}
+                  onBlur={() => handleBlur('pickup_lon')}
+                  disabled={disabled}
+                  aria-invalid={!!errors.pickup_lon}
+                  aria-describedby={errors.pickup_lon ? 'pickup_lon_error' : undefined}
+                />
+                {errors.pickup_lon && (
+                  <p id="pickup_lon_error" className="text-sm text-destructive" role="alert">
+                    {errors.pickup_lon}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="dropoff_lat">Dropoff Latitude</Label>
+                <Input
+                  id="dropoff_lat"
+                  type="number"
+                  step="0.000001"
+                  placeholder="40.6413"
+                  value={values.dropoff_lat ?? ''}
+                  onChange={(e) => handleChange('dropoff_lat', parseFloat(e.target.value) || 0)}
+                  onBlur={() => handleBlur('dropoff_lat')}
+                  disabled={disabled}
+                  aria-invalid={!!errors.dropoff_lat}
+                  aria-describedby={errors.dropoff_lat ? 'dropoff_lat_error' : undefined}
+                />
+                {errors.dropoff_lat && (
+                  <p id="dropoff_lat_error" className="text-sm text-destructive" role="alert">
+                    {errors.dropoff_lat}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="dropoff_lon">Dropoff Longitude</Label>
+                <Input
+                  id="dropoff_lon"
+                  type="number"
+                  step="0.000001"
+                  placeholder="-73.7781"
+                  value={values.dropoff_lon ?? ''}
+                  onChange={(e) => handleChange('dropoff_lon', parseFloat(e.target.value) || 0)}
+                  onBlur={() => handleBlur('dropoff_lon')}
+                  disabled={disabled}
+                  aria-invalid={!!errors.dropoff_lon}
+                  aria-describedby={errors.dropoff_lon ? 'dropoff_lon_error' : undefined}
+                />
+                {errors.dropoff_lon && (
+                  <p id="dropoff_lon_error" className="text-sm text-destructive" role="alert">
+                    {errors.dropoff_lon}
+                  </p>
+                )}
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="pickup_lon">Pickup Longitude</Label>
-              <Input
-                id="pickup_lon"
-                type="number"
-                step="0.000001"
-                placeholder="-73.9855"
-                value={values.pickup_lon ?? ''}
-                onChange={(e) => handleChange('pickup_lon', parseFloat(e.target.value) || 0)}
-                onBlur={() => handleBlur('pickup_lon')}
-                disabled={disabled}
-                aria-invalid={!!errors.pickup_lon}
-                aria-describedby={errors.pickup_lon ? 'pickup_lon_error' : undefined}
-              />
-              {errors.pickup_lon && (
-                <p id="pickup_lon_error" className="text-sm text-destructive" role="alert">
-                  {errors.pickup_lon}
-                </p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="dropoff_lat">Dropoff Latitude</Label>
-              <Input
-                id="dropoff_lat"
-                type="number"
-                step="0.000001"
-                placeholder="40.6413"
-                value={values.dropoff_lat ?? ''}
-                onChange={(e) => handleChange('dropoff_lat', parseFloat(e.target.value) || 0)}
-                onBlur={() => handleBlur('dropoff_lat')}
-                disabled={disabled}
-                aria-invalid={!!errors.dropoff_lat}
-                aria-describedby={errors.dropoff_lat ? 'dropoff_lat_error' : undefined}
-              />
-              {errors.dropoff_lat && (
-                <p id="dropoff_lat_error" className="text-sm text-destructive" role="alert">
-                  {errors.dropoff_lat}
-                </p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="dropoff_lon">Dropoff Longitude</Label>
-              <Input
-                id="dropoff_lon"
-                type="number"
-                step="0.000001"
-                placeholder="-73.7781"
-                value={values.dropoff_lon ?? ''}
-                onChange={(e) => handleChange('dropoff_lon', parseFloat(e.target.value) || 0)}
-                onBlur={() => handleBlur('dropoff_lon')}
-                disabled={disabled}
-                aria-invalid={!!errors.dropoff_lon}
-                aria-describedby={errors.dropoff_lon ? 'dropoff_lon_error' : undefined}
-              />
-              {errors.dropoff_lon && (
-                <p id="dropoff_lon_error" className="text-sm text-destructive" role="alert">
-                  {errors.dropoff_lon}
-                </p>
-              )}
-            </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="datetime">Trip Date & Time</Label>
-            <Input
-              id="datetime"
-              type="datetime-local"
-              value={values.datetime ?? ''}
-              onChange={(e) => handleDateTimeChange(e.target.value)}
-              onBlur={() => {
-                handleBlur('hour');
-                handleBlur('day_of_week_num');
-                handleBlur('month');
-              }}
-              disabled={disabled}
-              className="w-full"
-            />
-            {(errors.hour || errors.day_of_week_num || errors.month) && (
-              <p className="text-sm text-destructive" role="alert">
-                {errors.hour || errors.day_of_week_num || errors.month}
-              </p>
-            )}
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="datetime">Trip Date & Time</Label>
+              <Input
+                id="datetime"
+                type="datetime-local"
+                value={values.datetime ?? ''}
+                onChange={(e) => handleDateTimeChange(e.target.value)}
+                onBlur={() => {
+                  handleBlur('hour');
+                  handleBlur('day_of_week_num');
+                  handleBlur('month');
+                }}
+                disabled={disabled}
+                className="w-full"
+              />
+              {(errors.hour || errors.day_of_week_num || errors.month) && (
+                <p className="text-sm text-destructive" role="alert">
+                  {errors.hour || errors.day_of_week_num || errors.month}
+                </p>
+              )}
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="passenger_count">Passenger Count</Label>
-            <Select
-              value={String(values.passenger_count ?? 1)}
-              onValueChange={(v) => handleChange('passenger_count', parseInt(v, 10))}
-              disabled={disabled}
-            >
-              <SelectTrigger id="passenger_count" aria-invalid={!!errors.passenger_count}>
-                <SelectValue placeholder="Select passengers" />
-              </SelectTrigger>
-              <SelectContent>
-                {Array.from({ length: 6 }, (_, i) => i + 1).map((n) => (
-                  <SelectItem key={n} value={String(n)}>
-                    {n}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {errors.passenger_count && (
-              <p id="passenger_count_error" className="text-sm text-destructive" role="alert">
-                {errors.passenger_count}
-              </p>
-            )}
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="passenger_count">Passenger Count</Label>
+              <PassengerStepper
+                value={values.passenger_count}
+                onChange={(v) => handleChange('passenger_count', v)}
+                disabled={disabled}
+              />
+              {errors.passenger_count && (
+                <p id="passenger_count_error" className="text-sm text-destructive" role="alert">
+                  {errors.passenger_count}
+                </p>
+              )}
+            </div>
 
-          <Button type="submit" className="w-full" disabled={disabled}>
-            Predict Fare
-          </Button>
-        </form>
+            <Button type="submit" className="w-full" disabled={disabled}>
+              Predict Fare
+            </Button>
+          </form>
+        ) : (
+          // Describe mode - NaturalLanguageInput embedded
+          <NaturalLanguageInput onParsedTrip={onParsedTrip ?? (() => {})} disabled={disabled} />
+        )}
       </CardContent>
     </Card>
   );

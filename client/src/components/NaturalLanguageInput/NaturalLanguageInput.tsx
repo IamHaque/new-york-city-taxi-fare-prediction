@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/com
 import { parseTrip } from '@/api/fareApi';
 import type { ParsedTripDetails } from '@/types/trip';
 import { ErrorBanner } from '@/components/shared/ErrorBanner';
-import { Loader2 } from 'lucide-react';
+import { Loader2, MessageSquare } from 'lucide-react';
 
 interface NaturalLanguageInputProps {
   onParsedTrip: (trip: ParsedTripDetails) => void;
@@ -17,6 +17,7 @@ interface NaturalLanguageInputProps {
  * NaturalLanguageInput - free-text trip description parsed via LLM (Epic 5 stretch).
  * Calls parseTrip(), on success calls onParsedTrip() to pre-fill TripForm.
  * Gracefully handles malformed LLM responses.
+ * Designed to be embedded within TripForm's describe mode (Level 1 card styling).
  */
 export function NaturalLanguageInput({ onParsedTrip, disabled }: NaturalLanguageInputProps) {
   const [description, setDescription] = useState('');
@@ -34,7 +35,10 @@ export function NaturalLanguageInput({ onParsedTrip, disabled }: NaturalLanguage
       const parsed = await parseTrip(description.trim());
       onParsedTrip(parsed);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Could not understand that trip description. Please fill the form manually.';
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'Could not understand that trip description. Please fill the form manually.';
       setError(message);
     } finally {
       setIsLoading(false);
@@ -42,12 +46,16 @@ export function NaturalLanguageInput({ onParsedTrip, disabled }: NaturalLanguage
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Describe Your Trip</CardTitle>
-        <CardDescription>
-          Or enter details manually above. Example: "3 people from Times Square to JFK airport Friday at 6pm"
-        </CardDescription>
+    // Level 1 card: secondary surface with softer border
+    <Card className="border-border/60 rounded-lg border">
+      <CardHeader className="flex flex-row items-center">
+        <MessageSquare className="mr-2 h-5 w-5 text-muted-foreground" />
+        <div>
+          <CardTitle className="text-2xl font-semibold">Describe Your Trip</CardTitle>
+          <CardDescription className="text-sm">
+            Example: "3 people from Times Square to JFK airport Friday at 6pm"
+          </CardDescription>
+        </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -66,7 +74,11 @@ export function NaturalLanguageInput({ onParsedTrip, disabled }: NaturalLanguage
 
           {error && <ErrorBanner message={error} />}
 
-          <Button type="submit" className="w-full" disabled={disabled || isLoading || !description.trim()}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={disabled || isLoading || !description.trim()}
+          >
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
