@@ -1,12 +1,13 @@
-import { useCallback, useState } from 'react';
-import { MapContainer, Marker, Polyline, TileLayer, useMapEvents } from 'react-leaflet';
-import type * as L from 'leaflet';
+import { useCallback, useEffect, useState } from 'react';
+import { MapContainer, Marker, Polyline, TileLayer, useMap, useMapEvents } from 'react-leaflet';
+import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/context/ThemeProvider';
 import { LANDMARK_COORDINATES } from '@/utils/landmarks';
 import { NYC_LAT_MAX, NYC_LAT_MIN, NYC_LON_MAX, NYC_LON_MIN } from '@/utils/validators';
 import { dropoffIcon, pickupIcon } from './Mapicons';
+import { reverseGeocode } from '@/utils/geocoding';
 
 export interface Coordinate {
   lat: number;
@@ -21,17 +22,11 @@ interface TripMapProps {
   disabled?: boolean;
 }
 
-// Reuses the EXACT same bounding box validateTripInputs already checks against (utils/validators.ts)
-// — the map physically cannot be panned or clicked outside this box, so it enforces the same
-// constraint the backend model was trained within by construction, rather than needing a second,
-// separately-maintained bounds check here.
 const NYC_BOUNDS: L.LatLngBoundsExpression = [
   [NYC_LAT_MIN, NYC_LON_MIN],
   [NYC_LAT_MAX, NYC_LON_MAX],
 ];
 
-// A curated, non-overwhelming subset of the full LANDMARK_COORDINATES table (utils/landmarks.ts)
-// — shown as quick-jump chips so users aren't stuck hunting around the map for common locations.
 const QUICK_JUMP_LANDMARKS = [
   'times square',
   'jfk airport',
@@ -43,7 +38,6 @@ const QUICK_JUMP_LANDMARKS = [
   'newark airport',
 ] as const;
 
-/** Invisible helper component — the standard react-leaflet pattern for hooking into map events. */
 function MapClickHandler({ onClick }: { onClick: (coord: Coordinate) => void }) {
   useMapEvents({
     click(e) {
@@ -53,12 +47,28 @@ function MapClickHandler({ onClick }: { onClick: (coord: Coordinate) => void }) 
   return null;
 }
 
-/**
- * TripMap - free OpenStreetMap-based map that replaces manual latitude/longitude text entry.
- * Click the map (or drag an existing pin) to set pickup/dropoff locations directly, instead of
- * typing 6-decimal coordinates by hand. "Set Pickup"/"Set Dropoff" determines which pin the next
- * click or landmark-chip selection updates; placing a pickup pin auto-advances to dropoff.
- */
+function FitBoundsHandler({
+  pickup,
+  dropoff,
+}: {
+  pickup: Coordinate | null;
+  dropoff: Coordinate | null;
+}) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (pickup && dropoff && map) {
+      const bounds = L.latLngBounds([
+        [pickup.lat, pickup.lon],
+        [dropoff.lat, dropoff.lon],
+      ]);
+      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+    }
+  }, [pickup, dropoff, map]);
+
+  return null;
+}
+
 export function TripMap({
   pickup,
   dropoff,
@@ -68,46 +78,96 @@ export function TripMap({
 }: TripMapProps) {
   const { theme } = useTheme();
   const [activePin, setActivePin] = useState<'pickup' | 'dropoff'>('pickup');
+  const [pickupAddress, setPickupAddress] = useState('');
+  const [dropoffAddress, setDropoffAddress] = useState('');
+  const [pickupAddressLoading, setPickupAddressLoading] = useState(false);
+  const [dropoffAddressLoading, setDropoffAddressLoading] = useState(false);
+  const [pickupAddressError, setPickupAddressError] = useState(false);
+  const [dropoffAddressError, setDropoffAddressError] = useState(false);
+
+  const fetchAddress = useCallback(async (coord: Coordinate, isPickup: boolean) => {
+    if (isPickup) {
+      setPickupAddressLoading(true);
+      setPickupAddressError(false);
+    } else {
+      setDropoffAddressLoading(true);
+      setDropoffAddressError(false);
+    }
+
+    try {
+      const addr = await reverseGeocode(coord.lat, coord.lon);
+      if (isPickup) {
+        setPickupAddress(addr);
+      } else {
+        setDropoffAddress(addr);
+      }
+    } catch {
+      if (isPickup) {
+        setPickupAddressError(true);
+      } else {
+        setDropoffAddressError(true);
+      }
+    } finally {
+      if (isPickup) {
+        setPickupAddressLoading(false);
+      } else {
+        setDropoffAddressLoading(false);
+      }
+    }
+  }, []);
 
   const handleMapClick = useCallback(
-    (coord: Coordinate) => {
+    async (coord: Coordinate) => {
       if (disabled) return;
       if (activePin === 'pickup') {
         onPickupChange(coord);
-        setActivePin('dropoff'); // auto-advance so the very next click sets dropoff
+        await fetchAddress(coord, true);
       } else {
         onDropoffChange(coord);
+        await fetchAddress(coord, false);
       }
     },
-    [activePin, disabled, onPickupChange, onDropoffChange]
+    [activePin, disabled, onPickupChange, onDropoffChange, fetchAddress]
   );
 
-  function handleLandmarkClick(name: string) {
+  async function handleLandmarkClick(name: string) {
     if (disabled) return;
     const coords = LANDMARK_COORDINATES[name];
     if (!coords) return;
     const coord: Coordinate = { lat: coords[0], lon: coords[1] };
     if (activePin === 'pickup') {
       onPickupChange(coord);
-      setActivePin('dropoff');
+      await fetchAddress(coord, true);
     } else {
       onDropoffChange(coord);
+      await fetchAddress(coord, false);
     }
   }
 
-  function handleMarkerDragEnd(e: L.LeafletEvent, onChange: (coord: Coordinate) => void) {
+  async function handleMarkerDragEnd(
+    e: L.LeafletEvent,
+    onChange: (coord: Coordinate) => void,
+    isPickup: boolean
+  ) {
     const marker = e.target as L.Marker;
     const pos = marker.getLatLng();
-    onChange({ lat: pos.lat, lon: pos.lng });
+    const coord = { lat: pos.lat, lon: pos.lng };
+    onChange(coord);
+    await fetchAddress(coord, isPickup);
   }
 
-  // CARTO's free dark-tile basemap in dark mode, standard OSM tiles in light mode. Both are free
-  // and require no API key — only attribution, which stays visible below via the `attribution`
-  // prop. Matches the map's palette to the app's active theme rather than always showing a bright
-  // tile set that would clash with a dark UI.
+  const handleRetryAddress = useCallback(
+    async (isPickup: boolean) => {
+      const coord = isPickup ? pickup : dropoff;
+      if (!coord) return;
+      await fetchAddress(coord, isPickup);
+    },
+    [pickup, dropoff, fetchAddress]
+  );
+
   const tileUrl =
     theme === 'dark'
-      ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_40hw_1_a2904f9235369bdd56f8c34e'
+      ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=cb1_40hw_1_a2904f9235369bdd56f8c34e'
       : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
   const tileAttribution =
     theme === 'dark'
@@ -148,18 +208,21 @@ export function TripMap({
           minZoom={10}
           maxBounds={NYC_BOUNDS}
           maxBoundsViscosity={1.0}
-          style={{ height: '320px', width: '100%' }}
+          style={{ height: '400px', width: '100%' }}
           scrollWheelZoom
         >
           <TileLayer url={tileUrl} attribution={tileAttribution} />
           <MapClickHandler onClick={handleMapClick} />
+          <FitBoundsHandler pickup={pickup} dropoff={dropoff} />
 
           {pickup && (
             <Marker
               position={[pickup.lat, pickup.lon]}
               icon={pickupIcon}
               draggable={!disabled}
-              eventHandlers={{ dragend: (e) => handleMarkerDragEnd(e, onPickupChange) }}
+              eventHandlers={{
+                dragend: (e) => handleMarkerDragEnd(e, onPickupChange, true),
+              }}
             />
           )}
           {dropoff && (
@@ -167,7 +230,9 @@ export function TripMap({
               position={[dropoff.lat, dropoff.lon]}
               icon={dropoffIcon}
               draggable={!disabled}
-              eventHandlers={{ dragend: (e) => handleMarkerDragEnd(e, onDropoffChange) }}
+              eventHandlers={{
+                dragend: (e) => handleMarkerDragEnd(e, onDropoffChange, false),
+              }}
             />
           )}
           {pickup && dropoff && (
@@ -196,18 +261,52 @@ export function TripMap({
         ))}
       </div>
 
-      <div className="grid grid-cols-2 gap-3 font-mono text-xs text-muted-foreground">
-        <div>
-          <span className="text-primary">Pickup:</span>{' '}
-          {pickup
-            ? `${pickup.lat.toFixed(6)}, ${pickup.lon.toFixed(6)}`
-            : 'not set — click the map'}
+      <div className="space-y-2 text-sm">
+        <div className="flex min-w-0 items-start gap-2">
+          <span className="shrink-0 font-medium text-primary">Pickup:</span>
+          <span className="flex-1 truncate text-muted-foreground">
+            {pickupAddressLoading ? (
+              'Loading address...'
+            ) : pickupAddressError ? (
+              <span className="flex items-center gap-1.5">
+                <span>Address unavailable</span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-5 px-2 py-0 text-xs"
+                  onClick={() => handleRetryAddress(true)}
+                >
+                  Retry
+                </Button>
+              </span>
+            ) : (
+              pickupAddress || 'Click map to set'
+            )}
+          </span>
         </div>
-        <div>
-          <span className="text-destructive">Dropoff:</span>{' '}
-          {dropoff
-            ? `${dropoff.lat.toFixed(6)}, ${dropoff.lon.toFixed(6)}`
-            : 'not set — click the map'}
+        <div className="flex min-w-0 items-start gap-2">
+          <span className="shrink-0 font-medium text-destructive">Dropoff:</span>
+          <span className="flex-1 truncate text-muted-foreground">
+            {dropoffAddressLoading ? (
+              'Loading address...'
+            ) : dropoffAddressError ? (
+              <span className="flex items-center gap-1.5">
+                <span>Address unavailable</span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-5 px-2 py-0 text-xs"
+                  onClick={() => handleRetryAddress(false)}
+                >
+                  Retry
+                </Button>
+              </span>
+            ) : (
+              dropoffAddress || 'Click map to set'
+            )}
+          </span>
         </div>
       </div>
     </div>

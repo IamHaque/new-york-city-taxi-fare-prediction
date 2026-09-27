@@ -48,14 +48,14 @@ export function NaturalLanguageInput({ onParsedTrip, disabled }: NaturalLanguage
   return (
     // Level 1 card: secondary surface with softer border
     <Card className="border-border/60 rounded-lg border">
-      <CardHeader className="flex flex-row items-center">
-        <MessageSquare className="mr-2 h-5 w-5 text-muted-foreground" />
-        <div>
+      <CardHeader className="flex flex-col items-start">
+        <div className="flex w-full items-center gap-2">
+          <MessageSquare className="mr-2 h-5 w-5 text-muted-foreground" />
           <CardTitle className="text-2xl font-semibold">Describe Your Trip</CardTitle>
-          <CardDescription className="text-sm">
-            Example: "3 people from Times Square to JFK airport Friday at 6pm"
-          </CardDescription>
         </div>
+        <CardDescription className="text-sm">
+          Example: "3 people from Times Square to JFK airport Friday at 6pm"
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">

@@ -1,6 +1,21 @@
+import os
+import sys
 import numpy as np
 
-from config import JFK_COORD, LGA_COORD, EWR_COORD, MIDTOWN_COORD
+# Get the absolute path of the directory containing this script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Add both the script's directory and its parent directory to sys.path
+if script_dir not in sys.path:
+    sys.path.insert(0, script_dir)
+if os.path.dirname(script_dir) not in sys.path:
+    sys.path.insert(0, os.path.dirname(script_dir))
+
+# Dynamic import attempt
+try:
+    from scripts.config import JFK_COORD, LGA_COORD, EWR_COORD, MIDTOWN_COORD
+except ModuleNotFoundError:
+    from config import JFK_COORD, LGA_COORD, EWR_COORD, MIDTOWN_COORD
 
 def compute_bearing(lat1, lon1, lat2, lon2):
     """Calculates the directional angle of the trip."""

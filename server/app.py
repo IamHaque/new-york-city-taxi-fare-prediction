@@ -6,7 +6,7 @@ import pandas as pd
 import traceback
 
 from scripts.config import (
-    MODEL_SAVE_PATH_INCREMENTAL,
+    MODEL_SAVE_PATH_EXTREME,
     SERVER_HOST,
     SERVER_PORT,
     MIN_FARE_AMOUNT,
@@ -21,7 +21,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Load model using path configuration
-model = joblib.load(MODEL_SAVE_PATH_INCREMENTAL)
+model = joblib.load(MODEL_SAVE_PATH_EXTREME)
 
 
 def parse_request_data(request_json):
@@ -51,7 +51,7 @@ def predict():
         df = parse_request_data(data)
         processed_df = preprocess_input_dataframe(df)
 
-       # Run prediction in log-space
+        # Run prediction in log-space
         log_predictions = model.predict(processed_df[FEATURE_COLUMNS])
 
         # CRITICAL: Reverse log transformation back to standard dollar amounts
