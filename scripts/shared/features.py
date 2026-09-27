@@ -1,5 +1,6 @@
 import numpy as np
-from scripts.config import JFK_COORD, LGA_COORD, EWR_COORD, MIDTOWN_COORD
+
+from config import JFK_COORD, LGA_COORD, EWR_COORD, MIDTOWN_COORD
 
 def compute_bearing(lat1, lon1, lat2, lon2):
     """Calculates the directional angle of the trip."""

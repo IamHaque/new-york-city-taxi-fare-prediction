@@ -1,7 +1,7 @@
-import pandas as pd
 import numpy as np
-from scripts.shared.features import compute_features
-from scripts.config import NYC_LAT_MIN, NYC_LAT_MAX, NYC_LON_MIN, NYC_LON_MAX
+
+from shared.features import compute_features
+from config import NYC_LAT_MIN, NYC_LAT_MAX, NYC_LON_MIN, NYC_LON_MAX
 
 def process_chunk(chunk):
     """Parses temporal data, applies geographical constraints, and generates features."""
