@@ -1,0 +1,7 @@
+[
+  { "hour": 0, "avgFare": 12.4 },
+  { "hour": 6, "avgFare": 9.2 },
+  { "hour": 8, "avgFare": 14.5 },
+  { "hour": 17, "avgFare": 16.9 },
+  { "hour": 23, "avgFare": 13.1 }
+]
