@@ -11,6 +11,7 @@ import { enrichParsedTripWithCoordinates } from '@/utils/landmarks';
 import { PassengerStepper } from '@/components/shared/PassengerStepper';
 import { InputModeToggle } from '@/components/shared/InputModeToggle';
 import { NaturalLanguageInput } from '@/components/NaturalLanguageInput/NaturalLanguageInput';
+import { TripMap, type Coordinate } from '@/components/TripMap/TripMap';
 
 interface TripFormProps {
   onSubmit: (trip: TripInput) => void;
@@ -84,9 +85,9 @@ function parsedTripToFormState(parsed: ParsedTripDetails): FormState {
  * TripForm - collects and validates trip input from the user.
  * Calls onSubmit(trip: TripInput) prop when valid; does NOT call the API itself.
  * Accepts initialValues from natural language parsing to pre-fill fields.
- * Supports two modes: 'manual' (coordinate fields) and 'describe' (natural language).
- * Validation errors only show for fields the user has interacted with (onBlur),
- * plus any empty required fields on submit.
+ * Supports two modes: 'manual' (map-based pickup/dropoff selection) and 'describe' (natural language).
+ * Validation errors only show for fields the user has interacted with (map click counts as an
+ * interaction, same as a text input's blur), plus any empty required fields on submit.
  */
 export function TripForm({
   onSubmit,
@@ -137,6 +138,28 @@ export function TripForm({
   function handleBlur(field: keyof TripInput | 'datetime') {
     setTouched((prev) => ({ ...prev, [field]: true }));
     const validation = validateTripInputs(toTripInputPartial(values));
+    setErrors(validation);
+  }
+
+  // A map click/drag is a single, complete interaction — unlike a text input there's no
+  // separate "focus then blur" moment, so placing or moving a pin is treated as immediately
+  // touched, showing validation feedback right away rather than waiting for an event that
+  // would never naturally occur with a map-based control.
+  function handlePickupMapChange(coord: Coordinate) {
+    setValues((prev) => ({ ...prev, pickup_lat: coord.lat, pickup_lon: coord.lon }));
+    setTouched((prev) => ({ ...prev, pickup_lat: true, pickup_lon: true }));
+    const validation = validateTripInputs(
+      toTripInputPartial({ ...values, pickup_lat: coord.lat, pickup_lon: coord.lon })
+    );
+    setErrors(validation);
+  }
+
+  function handleDropoffMapChange(coord: Coordinate) {
+    setValues((prev) => ({ ...prev, dropoff_lat: coord.lat, dropoff_lon: coord.lon }));
+    setTouched((prev) => ({ ...prev, dropoff_lat: true, dropoff_lon: true }));
+    const validation = validateTripInputs(
+      toTripInputPartial({ ...values, dropoff_lat: coord.lat, dropoff_lon: coord.lon })
+    );
     setErrors(validation);
   }
 
@@ -203,6 +226,15 @@ export function TripForm({
     }
   }
 
+  const pickupCoord: Coordinate | null =
+    values.pickup_lat !== '' && values.pickup_lon !== ''
+      ? { lat: values.pickup_lat, lon: values.pickup_lon }
+      : null;
+  const dropoffCoord: Coordinate | null =
+    values.dropoff_lat !== '' && values.dropoff_lon !== ''
+      ? { lat: values.dropoff_lat, lon: values.dropoff_lon }
+      : null;
+
   // Level 2 card: primary surface with top accent border
   return (
     <Card className="rounded-lg border border-t-2 border-border border-t-primary">
@@ -216,87 +248,25 @@ export function TripForm({
       <CardContent>
         {mode === 'manual' ? (
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="pickup_lat">Pickup Latitude</Label>
-                <Input
-                  id="pickup_lat"
-                  type="number"
-                  step="0.000001"
-                  placeholder="40.7580"
-                  value={values.pickup_lat ?? ''}
-                  onChange={(e) => handleChange('pickup_lat', parseFloat(e.target.value) || 0)}
-                  onBlur={() => handleBlur('pickup_lat')}
-                  disabled={disabled}
-                  aria-invalid={!!errors.pickup_lat}
-                  aria-describedby={errors.pickup_lat ? 'pickup_lat_error' : undefined}
-                />
-                {errors.pickup_lat && (
-                  <p id="pickup_lat_error" className="text-sm text-destructive" role="alert">
-                    {errors.pickup_lat}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="pickup_lon">Pickup Longitude</Label>
-                <Input
-                  id="pickup_lon"
-                  type="number"
-                  step="0.000001"
-                  placeholder="-73.9855"
-                  value={values.pickup_lon ?? ''}
-                  onChange={(e) => handleChange('pickup_lon', parseFloat(e.target.value) || 0)}
-                  onBlur={() => handleBlur('pickup_lon')}
-                  disabled={disabled}
-                  aria-invalid={!!errors.pickup_lon}
-                  aria-describedby={errors.pickup_lon ? 'pickup_lon_error' : undefined}
-                />
-                {errors.pickup_lon && (
-                  <p id="pickup_lon_error" className="text-sm text-destructive" role="alert">
-                    {errors.pickup_lon}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="dropoff_lat">Dropoff Latitude</Label>
-                <Input
-                  id="dropoff_lat"
-                  type="number"
-                  step="0.000001"
-                  placeholder="40.6413"
-                  value={values.dropoff_lat ?? ''}
-                  onChange={(e) => handleChange('dropoff_lat', parseFloat(e.target.value) || 0)}
-                  onBlur={() => handleBlur('dropoff_lat')}
-                  disabled={disabled}
-                  aria-invalid={!!errors.dropoff_lat}
-                  aria-describedby={errors.dropoff_lat ? 'dropoff_lat_error' : undefined}
-                />
-                {errors.dropoff_lat && (
-                  <p id="dropoff_lat_error" className="text-sm text-destructive" role="alert">
-                    {errors.dropoff_lat}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="dropoff_lon">Dropoff Longitude</Label>
-                <Input
-                  id="dropoff_lon"
-                  type="number"
-                  step="0.000001"
-                  placeholder="-73.7781"
-                  value={values.dropoff_lon ?? ''}
-                  onChange={(e) => handleChange('dropoff_lon', parseFloat(e.target.value) || 0)}
-                  onBlur={() => handleBlur('dropoff_lon')}
-                  disabled={disabled}
-                  aria-invalid={!!errors.dropoff_lon}
-                  aria-describedby={errors.dropoff_lon ? 'dropoff_lon_error' : undefined}
-                />
-                {errors.dropoff_lon && (
-                  <p id="dropoff_lon_error" className="text-sm text-destructive" role="alert">
-                    {errors.dropoff_lon}
-                  </p>
-                )}
-              </div>
+            <div className="space-y-2">
+              <Label>Pickup &amp; Dropoff Location</Label>
+              <TripMap
+                pickup={pickupCoord}
+                dropoff={dropoffCoord}
+                onPickupChange={handlePickupMapChange}
+                onDropoffChange={handleDropoffMapChange}
+                disabled={disabled}
+              />
+              {(errors.pickup_lat || errors.pickup_lon) && (
+                <p className="text-sm text-destructive" role="alert">
+                  {errors.pickup_lat || errors.pickup_lon}
+                </p>
+              )}
+              {(errors.dropoff_lat || errors.dropoff_lon) && (
+                <p className="text-sm text-destructive" role="alert">
+                  {errors.dropoff_lat || errors.dropoff_lon}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
