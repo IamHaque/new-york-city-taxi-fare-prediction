@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import joblib
 import numpy as np
+import pandas as pd
 
 # Additional route — calls the company's local Ollama server (llama3:8b)
 import requests
@@ -30,13 +31,14 @@ def predict():
         data['dropoff_lat'], data['dropoff_lon']
     )
 
-    features = [[
+    # Ensure these column names EXACTLY match the ones used during training
+    features = pd.DataFrame([[
         distance_km,
         data['hour'],
         data['day_of_week_num'],
         data['month'],
         data['passenger_count']
-    ]]
+    ]], columns=['distance_km', 'hour', 'day_of_week_num', 'month', 'passenger_count'])
 
     prediction = model.predict(features)[0]
     return jsonify({
