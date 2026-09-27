@@ -51,8 +51,13 @@ def predict():
         df = parse_request_data(data)
         processed_df = preprocess_input_dataframe(df)
 
-        # Run prediction and enforce legal minimum fare
-        predictions = model.predict(processed_df[FEATURE_COLUMNS])
+       # Run prediction in log-space
+        log_predictions = model.predict(processed_df[FEATURE_COLUMNS])
+
+        # CRITICAL: Reverse log transformation back to standard dollar amounts
+        predictions = np.expm1(log_predictions)
+
+        # Enforce legal minimum fare[cite: 6]
         final_fares = np.clip(predictions, MIN_FARE_AMOUNT, None)
 
         results = [
