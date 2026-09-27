@@ -31,6 +31,7 @@ interface FormState {
   hour: number | '';
   day_of_week_num: number | '';
   month: number | '';
+  year: number | '';
   passenger_count: number;
 }
 
@@ -43,12 +44,13 @@ function toTripInputPartial(state: FormState): Partial<TripInput> {
     hour: state.hour === '' ? undefined : state.hour,
     day_of_week_num: state.day_of_week_num === '' ? undefined : state.day_of_week_num,
     month: state.month === '' ? undefined : state.month,
+    year: state.year === '' ? undefined : state.year,
     passenger_count: state.passenger_count,
   };
 }
 
 function parsedTripToFormState(parsed: ParsedTripDetails): FormState {
-  // Convert hour, day_of_week_num, month to datetime-local string
+  // Convert hour, day_of_week_num, month, year to datetime-local string
   // We'll create a date in the current year with the given month/day
   const now = new Date();
   const date = new Date(now.getFullYear(), parsed.month - 1, 1); // First day of month
@@ -73,6 +75,7 @@ function parsedTripToFormState(parsed: ParsedTripDetails): FormState {
     hour: parsed.hour,
     day_of_week_num: parsed.day_of_week_num,
     month: parsed.month,
+    year: parsed.year,
     passenger_count: parsed.passenger_count,
   };
 }
@@ -102,6 +105,7 @@ export function TripForm({
     hour: '',
     day_of_week_num: '',
     month: '',
+    year: '',
     passenger_count: 1,
   });
   const [errors, setErrors] = useState<Partial<Record<keyof TripInput, string>>>({});
@@ -139,11 +143,11 @@ export function TripForm({
   function handleDateTimeChange(value: string) {
     setValues((prev) => ({ ...prev, datetime: value }));
     if (value) {
-      const { hour, day_of_week_num, month } = decomposeDateTime(value);
-      setValues((prev) => ({ ...prev, hour, day_of_week_num, month }));
-      if (touched.hour || touched.day_of_week_num || touched.month) {
+      const { hour, day_of_week_num, month, year } = decomposeDateTime(value);
+      setValues((prev) => ({ ...prev, hour, day_of_week_num, month, year }));
+      if (touched.hour || touched.day_of_week_num || touched.month || touched.year) {
         const validation = validateTripInputs(
-          toTripInputPartial({ ...values, hour, day_of_week_num, month })
+          toTripInputPartial({ ...values, hour, day_of_week_num, month, year })
         );
         setErrors(validation);
       }
@@ -171,6 +175,7 @@ export function TripForm({
       'hour',
       'day_of_week_num',
       'month',
+      'year',
     ];
     for (const key of requiredFields) {
       const val = values[key];
@@ -191,6 +196,7 @@ export function TripForm({
         hour: values.hour as number,
         day_of_week_num: values.day_of_week_num as number,
         month: values.month as number,
+        year: values.year as number,
         passenger_count: values.passenger_count,
       };
       onSubmit(trip);
@@ -305,13 +311,14 @@ export function TripForm({
                   handleBlur('hour');
                   handleBlur('day_of_week_num');
                   handleBlur('month');
+                  handleBlur('year');
                 }}
                 disabled={disabled}
                 className="w-full"
               />
-              {(errors.hour || errors.day_of_week_num || errors.month) && (
+              {(errors.hour || errors.day_of_week_num || errors.month || errors.year) && (
                 <p className="text-sm text-destructive" role="alert">
-                  {errors.hour || errors.day_of_week_num || errors.month}
+                  {errors.hour || errors.day_of_week_num || errors.month || errors.year}
                 </p>
               )}
             </div>

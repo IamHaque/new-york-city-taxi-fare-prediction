@@ -10,6 +10,7 @@ export interface TripInput {
   hour: number; // 0-23
   day_of_week_num: number; // 0 (Mon) - 6 (Sun), matches Python's datetime.dayofweek
   month: number; // 1-12
+  year: number;
   passenger_count: number; // 1-6
 }
 
@@ -31,6 +32,7 @@ export interface ParsedTripDetails {
   hour: number;
   day_of_week_num: number;
   month: number;
+  year: number;
   passenger_count: number;
   pickup_lat?: number;
   pickup_lon?: number;

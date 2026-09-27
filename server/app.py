@@ -3,71 +3,50 @@ from flask_cors import CORS
 import joblib
 import numpy as np
 import pandas as pd
-
-# Additional route — calls the company's local Ollama server (llama3:8b)
-import requests
+from shared.features import compute_features, FEATURE_COLUMNS
 
 app = Flask(__name__)
-CORS(app)  # allows the React dev server (different port) to call this API without being blocked by the browser
+CORS(app)
 
 model = joblib.load('fare_model_full.pkl')
-OLLAMA_URL = "http://localhost:11434/api/generate"
-
-def haversine(lat1, lon1, lat2, lon2):
-    R = 6371
-    lat1, lon1, lat2, lon2 = map(np.radians, [lat1, lon1, lat2, lon2])
-    dlat, dlon = lat2 - lat1, lon2 - lon1
-    a = np.sin(dlat/2)**2 + np.cos(lat1)*np.cos(lat2)*np.sin(dlon/2)**2
-    return 2 * R * np.arcsin(np.sqrt(a))
 
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.get_json()
 
-    # Compute distance server-side so the frontend only ever needs to send raw coordinates,
-    # keeping the "business logic" of feature engineering in one place (not duplicated in JS).
-    distance_km = haversine(
-        data['pickup_lat'], data['pickup_lon'],
-        data['dropoff_lat'], data['dropoff_lon']
-    )
+    # Support both single dict and lists for batch predictions
+    if isinstance(data, dict):
+        data = [data]
 
-    # Ensure these column names EXACTLY match the ones used during training
-    features = pd.DataFrame([[
-        distance_km,
-        data['hour'],
-        data['day_of_week_num'],
-        data['month'],
-        data['passenger_count']
-    ]], columns=['distance_km', 'hour', 'day_of_week_num', 'month', 'passenger_count'])
+    df = pd.DataFrame(data)
 
-    prediction = model.predict(features)[0]
-    return jsonify({
-        'fare_amount': round(float(prediction), 2),
-        'distance_km': round(float(distance_km), 2)
+    # Map API keys to internal feature names
+    df = df.rename(columns={
+        'pickup_lat': 'pickup_latitude',
+        'pickup_lon': 'pickup_longitude',
+        'dropoff_lat': 'dropoff_latitude',
+        'dropoff_lon': 'dropoff_longitude'
     })
 
-@app.route('/parse-trip', methods=['POST'])
-def parse_trip():
-    user_text = request.get_json()['description']
+    # Ensure datatypes align
+    for col in ['pickup_latitude', 'pickup_longitude', 'dropoff_latitude', 'dropoff_longitude']:
+        df[col] = df[col].astype(float)
 
-    # The prompt instructs the LLM to return ONLY JSON, so the response can be parsed directly
-    # without the model adding conversational filler around the answer.
-    prompt = f"""Extract structured trip details from this text as JSON only, no explanation:
-    Text: "{user_text}"
-    Return exactly this shape:
-    {{"pickup_landmark": "", "dropoff_landmark": "", "hour": 0, "day_of_week_num": 0, "month": 0, "passenger_count": 1}}
-    """
+    # Apply shared feature engineering
+    df = compute_features(df)
 
-    response = requests.post(OLLAMA_URL, json={
-        "model": "llama3:8b",
-        "prompt": prompt,
-        "stream": False
-    })
+    # Predict and enforce NYC legal minimum
+    predictions = model.predict(df[FEATURE_COLUMNS])
+    final_fares = np.clip(predictions, 2.50, None)
 
-    llm_output = response.json()['response']
-    # In production, this JSON should be validated/parsed defensively (try/except around json.loads),
-    # since LLM output is not guaranteed to be perfectly formed JSON every time.
-    return llm_output
+    results = [
+        {"fare_amount": round(fare, 2), "distance_km": round(dist, 2)}
+        for fare, dist in zip(final_fares, df['distance_km'])
+    ]
+
+    # Return single object if input was single, otherwise return list
+    return jsonify(results[0] if len(results) == 1 else results)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # Recommend running via Waitress or Gunicorn in production
+    app.run(host='0.0.0.0', port=5000)
