@@ -16,6 +16,9 @@ METADATA_SAVE_PATH_STANDARD = "./trained-models/model_metadata_standard.pkl"
 MODEL_SAVE_PATH_INCREMENTAL = "./trained-models/fare_model_full.pkl"
 METADATA_SAVE_PATH_INCREMENTAL = "./trained-models/model_metadata_full.pkl"
 
+MODEL_SAVE_PATH_EXTREME = "./trained-models/fare_model_extreme.pkl"
+METADATA_SAVE_PATH_EXTREME = "./trained-models/model_metadata_extreme.pkl"
+
 # ==========================================
 # Training & Validation Parameters
 # ==========================================
@@ -28,6 +31,10 @@ STANDARD_VAL_SIZE_FRACTION = 0.05
 TOTAL_DATASET_ROWS = 55_423_856
 INCREMENTAL_CHUNK_SIZE = 4_000_000
 INCREMENTAL_VAL_SIZE_ROWS = 200_000
+
+# Extreme (Out-of-core) training
+EXTREME_TRAIN_MAX_ROWS = 20_000_000
+EXTREME_TRAIN_CHUNK_SIZE = 2_000_000
 
 # ==========================================
 # API Evaluation Parameters

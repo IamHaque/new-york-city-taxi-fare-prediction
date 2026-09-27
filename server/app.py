@@ -57,7 +57,7 @@ def predict():
         # CRITICAL: Reverse log transformation back to standard dollar amounts
         predictions = np.expm1(log_predictions)
 
-        # Enforce legal minimum fare[cite: 6]
+        # Enforce legal minimum fare
         final_fares = np.clip(predictions, MIN_FARE_AMOUNT, None)
 
         results = [
