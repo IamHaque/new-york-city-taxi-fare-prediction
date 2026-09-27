@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide number input spinners globally */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+/* Style calendar picker indicator for dark mode */
+input[type='datetime-local']::-webkit-calendar-picker-indicator {
+  opacity: 1;
+  filter: invert(1);
+  cursor: pointer;
+  background-color: transparent;
+}
+
+/* Light mode - keep default or subtle */
+:root:not(.dark) input[type='datetime-local']::-webkit-calendar-picker-indicator {
+  filter: none;
+  opacity: 0.7;
+}
+
 @layer base {
   :root {
     /* LIGHT THEME — an original extension of the reference, not from the source file.

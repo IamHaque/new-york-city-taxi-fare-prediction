@@ -82,6 +82,8 @@ function parsedTripToFormState(parsed: ParsedTripDetails): FormState {
  * Calls onSubmit(trip: TripInput) prop when valid; does NOT call the API itself.
  * Accepts initialValues from natural language parsing to pre-fill fields.
  * Supports two modes: 'manual' (coordinate fields) and 'describe' (natural language).
+ * Validation errors only show for fields the user has interacted with (onBlur),
+ * plus any empty required fields on submit.
  */
 export function TripForm({
   onSubmit,
@@ -150,19 +152,34 @@ export function TripForm({
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const allTouched = {
-      pickup_lat: true,
-      pickup_lon: true,
-      dropoff_lat: true,
-      dropoff_lon: true,
-      hour: true,
-      day_of_week_num: true,
-      month: true,
-      passenger_count: true,
-      datetime: true,
-    };
-    setTouched(allTouched);
     const validation = validateTripInputs(toTripInputPartial(values));
+
+    // Only mark empty/invalid fields as touched (not all fields)
+    const fieldsToTouch: Partial<Record<keyof TripInput | 'datetime', boolean>> = {};
+
+    // Mark fields with validation errors
+    for (const key of Object.keys(validation) as (keyof TripInput)[]) {
+      fieldsToTouch[key] = true;
+    }
+
+    // Also mark empty required fields
+    const requiredFields: (keyof TripInput)[] = [
+      'pickup_lat',
+      'pickup_lon',
+      'dropoff_lat',
+      'dropoff_lon',
+      'hour',
+      'day_of_week_num',
+      'month',
+    ];
+    for (const key of requiredFields) {
+      const val = values[key];
+      if (val === '' || val === undefined) {
+        fieldsToTouch[key] = true;
+      }
+    }
+
+    setTouched((prev) => ({ ...prev, ...fieldsToTouch }));
     setErrors(validation);
 
     if (Object.keys(validation).length === 0) {
@@ -183,8 +200,8 @@ export function TripForm({
   // Level 2 card: primary surface with top accent border
   return (
     <Card className="rounded-lg border border-t-2 border-border border-t-primary">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div className="flex items-center gap-2">
+      <CardHeader className="flex flex-col items-start gap-3">
+        <div className="flex w-full items-center gap-2">
           <MapPin className="h-5 w-5 text-muted-foreground" />
           <CardTitle className="text-2xl font-semibold">Trip Details</CardTitle>
         </div>
@@ -283,6 +300,7 @@ export function TripForm({
                 type="datetime-local"
                 value={values.datetime ?? ''}
                 onChange={(e) => handleDateTimeChange(e.target.value)}
+                onClick={(e) => e.currentTarget.showPicker()}
                 onBlur={() => {
                   handleBlur('hour');
                   handleBlur('day_of_week_num');

@@ -81,8 +81,8 @@ function App() {
             ) : (
               // Empty state with dashed border and icon per PRD v2 Story 3.3
               <Card className="rounded-lg border-dashed border-border">
-                <CardContent className="flex flex-col items-center gap-3 py-16 text-center">
-                  <Receipt className="text-muted-foreground/50 h-10 w-10" />
+                <CardContent className="flex min-h-[180px] flex-col items-center justify-center gap-4 py-12 text-center">
+                  <Receipt className="text-muted-foreground/50 mt-2 h-10 w-10" />
                   <p className="text-muted-foreground">Fill out the form to get a fare estimate</p>
                 </CardContent>
               </Card>

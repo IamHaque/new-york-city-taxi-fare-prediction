@@ -11,6 +11,7 @@ interface PassengerStepperProps {
 /**
  * PassengerStepper - direct port of the reference's `.score-row` + `.step-btn` pattern:
  * a bordered numeric field flanked by small increment/decrement buttons, value in mono font.
+ * Buttons and input now match shadcn Input height (h-10).
  */
 export function PassengerStepper({ value, onChange, disabled }: PassengerStepperProps) {
   function step(delta: number) {
@@ -24,30 +25,30 @@ export function PassengerStepper({ value, onChange, disabled }: PassengerStepper
         type="button"
         variant="outline"
         size="icon"
-        className="h-6 w-6 rounded"
+        className="h-10 w-10 rounded"
         disabled={disabled || value <= MIN_PASSENGERS}
         onClick={() => step(-1)}
         aria-label="Decrease passenger count"
       >
-        <Minus className="h-3 w-3" />
+        <Minus className="h-4 w-4" />
       </Button>
       <input
         type="number"
         readOnly
         value={value}
-        className="w-12 rounded border border-border bg-secondary py-1 text-center font-mono text-lg font-semibold text-foreground"
+        className="h-10 w-12 rounded border border-border bg-secondary text-center font-mono text-lg font-semibold text-foreground"
         aria-label="Passenger count"
       />
       <Button
         type="button"
         variant="outline"
         size="icon"
-        className="h-6 w-6 rounded"
+        className="h-10 w-10 rounded"
         disabled={disabled || value >= MAX_PASSENGERS}
         onClick={() => step(1)}
         aria-label="Increase passenger count"
       >
-        <Plus className="h-3 w-3" />
+        <Plus className="h-4 w-4" />
       </Button>
     </div>
   );
