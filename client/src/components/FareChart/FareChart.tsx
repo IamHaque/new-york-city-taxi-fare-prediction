@@ -4,46 +4,27 @@ import { BarChart3 } from 'lucide-react';
 import avgFareByHour from '@/data/avgFareByHour.json';
 import type { AvgFareByHour } from '@/types/trip';
 
-type Theme = 'light' | 'dark';
-
 interface FareChartProps {
   currentHour?: number;
   predictedFare?: number;
-  theme: Theme;
 }
 
-const THEME_COLORS: Record<
-  Theme,
-  {
-    axisTick: string;
-    barDefault: string;
-    barHighlight: string;
-    tooltipBg: string;
-    tooltipBorder: string;
-    tooltipText: string;
-  }
-> = {
-  light: {
-    axisTick: '#6b6f7a',
-    barDefault: '#a0a4ae',
-    barHighlight: '#6552d6',
-    tooltipBg: '#ffffff',
-    tooltipBorder: '#dcdad3',
-    tooltipText: '#1b1e26',
-  },
-  dark: {
-    axisTick: '#8d919c',
-    barDefault: '#4a4d5a',
-    barHighlight: '#7c6fe0',
-    tooltipBg: '#1b1e26',
-    tooltipBorder: '#2e323d',
-    tooltipText: '#edebe3',
-  },
+/**
+ * Colors are CSS custom properties (PRD v4 palette) rather than per-theme hexes, so every chart
+ * repaints on theme switch — including the system-preference case — without a theme prop.
+ */
+const CHART_COLORS = {
+  axisTick: 'var(--muted-foreground)',
+  barDefault: 'var(--muted-foreground)',
+  barHighlight: 'var(--chart-1)',
+  tooltipBg: 'var(--popover)',
+  tooltipBorder: 'var(--border)',
+  tooltipText: 'var(--popover-foreground)',
 };
 
-export function FareChart({ currentHour, predictedFare, theme }: FareChartProps) {
+export function FareChart({ currentHour, predictedFare }: FareChartProps) {
   const data = avgFareByHour as AvgFareByHour[];
-  const colors = THEME_COLORS[theme];
+  const colors = CHART_COLORS;
 
   const displayData = data.map((d) => ({
     ...d,
@@ -54,15 +35,15 @@ export function FareChart({ currentHour, predictedFare, theme }: FareChartProps)
   }));
 
   return (
-    <Card className="border-border/60 mt-8 rounded-lg border">
-      <CardHeader className="flex flex-col items-start">
-        <div className="flex w-full items-center gap-2">
-          <BarChart3 className="h-5 w-5 text-muted-foreground" />
-          <CardTitle className="text-2xl font-semibold">Average Fare by Hour</CardTitle>
+    <Card className="rounded-lg border">
+      <CardHeader className="flex-row items-center gap-2 space-y-0 pb-3">
+        <BarChart3 className="h-5 w-5 text-muted-foreground" />
+        <div>
+          <CardTitle className="text-lg font-semibold">Average Fare by Hour</CardTitle>
+          <CardDescription className="text-sm">
+            Based on historical NYC taxi data, not your specific trip
+          </CardDescription>
         </div>
-        <CardDescription className="text-sm">
-          Based on historical NYC taxi data, not your specific trip
-        </CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={250}>

@@ -1,37 +1,11 @@
 import { useState } from 'react';
 import { ThemeToggle } from '@/components/ThemeToggle/ThemeToggle';
-import { TripDetails } from '@/components/TripDetails/TripDetails';
-import { useFarePrediction } from '@/hooks/useFarePrediction';
-import type { ParsedTripDetails, TripInput } from '@/types/trip';
+import { TripPlanner } from '@/components/TripPlanner/TripPlanner';
+import { InsightsSection } from '@/components/InsightsSection/InsightsSection';
+import type { ChartContext } from '@/types/charts';
 
 function App() {
-  const { predict, applyResult, isLoading, result } = useFarePrediction();
-  const [parsedTrip, setParsedTrip] = useState<ParsedTripDetails | null>(null);
-  const [inputMode, setInputMode] = useState<'manual' | 'describe'>('manual');
-
-  function handleSubmit(trip: TripInput) {
-    predict(trip);
-  }
-
-  function handleParsedTrip(trip: ParsedTripDetails) {
-    setParsedTrip(trip);
-    // Switch to the manual view so the map (now pinned from the parsed coordinates), the
-    // populated form, and the result panel are all visible in one place.
-    setInputMode('manual');
-
-    if (trip.fare_amount !== undefined && trip.distance_km !== undefined) {
-      // /parse-trip already resolved both landmarks and ran the model server-side — show that
-      // prediction directly instead of firing a redundant /predict call for the same trip.
-      applyResult({ fare_amount: trip.fare_amount, distance_km: trip.distance_km });
-    }
-    // If fare_amount/distance_km are absent, the server couldn't resolve one or both landmarks
-    // (trip.warning explains which). The form/time/passenger fields still populate from what DID
-    // parse; the person places the remaining pin(s) manually and submits as usual.
-  }
-
-  function handleModeChange(mode: 'manual' | 'describe') {
-    setInputMode(mode);
-  }
+  const [chartContext, setChartContext] = useState<ChartContext>({});
 
   return (
     <div className="min-h-screen bg-background font-sans text-foreground">
@@ -48,16 +22,8 @@ function App() {
       </header>
 
       <main className="mx-auto max-w-7xl px-5 py-8">
-        <TripDetails
-          onSubmit={handleSubmit}
-          disabled={isLoading}
-          initialValues={parsedTrip ?? undefined}
-          mode={inputMode}
-          onModeChange={handleModeChange}
-          onParsedTrip={handleParsedTrip}
-          result={result ?? undefined}
-          isLoading={isLoading}
-        />
+        <TripPlanner onChartContextChange={setChartContext} />
+        <InsightsSection chartContext={chartContext} />
       </main>
 
       <footer className="border-t border-border px-5 py-4">

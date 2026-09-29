@@ -36,6 +36,12 @@ INCREMENTAL_VAL_SIZE_ROWS = 200_000
 EXTREME_TRAIN_MAX_ROWS = 20_000_000
 EXTREME_TRAIN_CHUNK_SIZE = 2_000_000
 
+# Chart data generation (scripts/generate_chart_data.py). Aggregate charts don't need the full
+# 55M-row dataset — a multi-million-row cleaned sample is statistically sufficient and far
+# faster to scan, mirroring EXTREME's chunk-then-cap approach at a smaller size.
+CHART_DATA_SAMPLE_ROWS = 2_000_000
+CHART_DATA_CHUNK_SIZE = 1_000_000
+
 # ==========================================
 # API Evaluation Parameters
 # ==========================================

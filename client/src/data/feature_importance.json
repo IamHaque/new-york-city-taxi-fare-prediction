@@ -1,0 +1,106 @@
+[
+  {
+    "feature": "distance_km",
+    "importance": 0.544623
+  },
+  {
+    "feature": "is_post_2012_hike",
+    "importance": 0.160814
+  },
+  {
+    "feature": "is_lga_trip",
+    "importance": 0.119994
+  },
+  {
+    "feature": "manhattan_km",
+    "importance": 0.055573
+  },
+  {
+    "feature": "abs_lon_diff",
+    "importance": 0.038423
+  },
+  {
+    "feature": "abs_lat_diff",
+    "importance": 0.014088
+  },
+  {
+    "feature": "is_overnight",
+    "importance": 0.013198
+  },
+  {
+    "feature": "bearing",
+    "importance": 0.00586
+  },
+  {
+    "feature": "year",
+    "importance": 0.00565
+  },
+  {
+    "feature": "hour",
+    "importance": 0.003922
+  },
+  {
+    "feature": "day_of_week_num",
+    "importance": 0.003608
+  },
+  {
+    "feature": "dropoff_latitude",
+    "importance": 0.00359
+  },
+  {
+    "feature": "is_jfk_trip",
+    "importance": 0.003514
+  },
+  {
+    "feature": "jfk_dropoff_dist",
+    "importance": 0.003356
+  },
+  {
+    "feature": "dropoff_longitude",
+    "importance": 0.002829
+  },
+  {
+    "feature": "midtown_pickup_dist",
+    "importance": 0.00281
+  },
+  {
+    "feature": "jfk_pickup_dist",
+    "importance": 0.002674
+  },
+  {
+    "feature": "ewr_dropoff_dist",
+    "importance": 0.002372
+  },
+  {
+    "feature": "lga_dropoff_dist",
+    "importance": 0.002237
+  },
+  {
+    "feature": "month",
+    "importance": 0.002195
+  },
+  {
+    "feature": "is_jfk_manhattan",
+    "importance": 0.002122
+  },
+  {
+    "feature": "lga_pickup_dist",
+    "importance": 0.001899
+  },
+  {
+    "feature": "pickup_latitude",
+    "importance": 0.001503
+  },
+  {
+    "feature": "pickup_longitude",
+    "importance": 0.001325
+  },
+  {
+    "feature": "is_rush_hour",
+    "importance": 0.000971
+  },
+  {
+    "feature": "passenger_count",
+    "importance": 0.00085
+  }
+]

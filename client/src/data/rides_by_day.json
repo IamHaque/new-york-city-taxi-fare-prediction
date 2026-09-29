@@ -1,0 +1,30 @@
+[
+  {
+    "day": "Mon",
+    "rides": 256529
+  },
+  {
+    "day": "Tue",
+    "rides": 280509
+  },
+  {
+    "day": "Wed",
+    "rides": 288850
+  },
+  {
+    "day": "Thu",
+    "rides": 299799
+  },
+  {
+    "day": "Fri",
+    "rides": 308591
+  },
+  {
+    "day": "Sat",
+    "rides": 303165
+  },
+  {
+    "day": "Sun",
+    "rides": 262557
+  }
+]

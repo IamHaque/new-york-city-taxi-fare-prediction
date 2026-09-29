@@ -34,5 +34,5 @@ function createPinIcon(cssColorVar: string): L.DivIcon {
   });
 }
 
-export const pickupIcon = createPinIcon('var(--primary)');
-export const dropoffIcon = createPinIcon('var(--destructive)');
+export const pickupIcon = createPinIcon('var(--pickup)');
+export const dropoffIcon = createPinIcon('var(--dropoff)');

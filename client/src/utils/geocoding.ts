@@ -1,6 +1,11 @@
 const CACHE = new Map<string, string>();
 const INFLIGHT = new Map<string, AbortController>();
-const REQUEST_QUEUE: Array<{ key: string; controller: AbortController; resolve: (value: string) => void; reject: (reason: Error) => void }> = [];
+const REQUEST_QUEUE: Array<{
+  key: string;
+  controller: AbortController;
+  resolve: (value: string) => void;
+  reject: (reason: Error) => void;
+}> = [];
 let isProcessing = false;
 const USER_AGENT = 'NYC-Taxi-Fare-Predictor/1.0';
 
@@ -29,8 +34,14 @@ async function processQueue(): Promise<void> {
     try {
       const url = new URL('https://nominatim.openstreetmap.org/reverse');
       url.searchParams.set('format', 'jsonv2');
-      url.searchParams.set('lat', (Math.round(parseFloat(key.split(',')[0]) / 10000 * 100000) / 100000).toString());
-      url.searchParams.set('lon', (Math.round(parseFloat(key.split(',')[1]) / 10000 * 100000) / 100000).toString());
+      url.searchParams.set(
+        'lat',
+        (Math.round((parseFloat(key.split(',')[0]) / 10000) * 100000) / 100000).toString()
+      );
+      url.searchParams.set(
+        'lon',
+        (Math.round((parseFloat(key.split(',')[1]) / 10000) * 100000) / 100000).toString()
+      );
       url.searchParams.set('addressdetails', '1');
       url.searchParams.set('accept-language', 'en');
 

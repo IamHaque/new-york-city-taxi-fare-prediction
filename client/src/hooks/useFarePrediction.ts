@@ -3,7 +3,8 @@ import type { TripInput, PredictionResult } from '@/types/trip';
 import { predictFare } from '@/api/fareApi';
 
 interface UseFarePredictionResult {
-  predict: (trip: TripInput) => Promise<void>;
+  /** Returns the prediction on success, or null on failure (error state is set either way). */
+  predict: (trip: TripInput) => Promise<PredictionResult | null>;
   applyResult: (result: PredictionResult) => void;
   isLoading: boolean;
   error: string | null;
@@ -19,15 +20,17 @@ export function useFarePrediction(): UseFarePredictionResult {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<PredictionResult | null>(null);
 
-  async function predict(trip: TripInput) {
+  async function predict(trip: TripInput): Promise<PredictionResult | null> {
     setIsLoading(true);
     setError(null);
     try {
       const data = await predictFare(trip);
       setResult(data);
+      return data;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
       setResult(null);
+      return null;
     } finally {
       setIsLoading(false);
     }

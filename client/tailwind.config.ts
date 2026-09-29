@@ -49,6 +49,14 @@ export default {
           DEFAULT: 'var(--card)',
           foreground: 'var(--card-foreground)',
         },
+        brand: {
+          DEFAULT: 'var(--brand)',
+          foreground: 'var(--brand-foreground)',
+        },
+        pickup: 'var(--pickup)',
+        dropoff: 'var(--dropoff)',
+        'chart-1': 'var(--chart-1)',
+        'chart-2': 'var(--chart-2)',
       },
       borderRadius: {
         lg: 'var(--radius)',

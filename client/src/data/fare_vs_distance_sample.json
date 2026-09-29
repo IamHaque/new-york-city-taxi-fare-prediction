@@ -1,0 +1,2002 @@
+[
+  {
+    "distance_km": 3.621,
+    "fare_amount": 11.7
+  },
+  {
+    "distance_km": 2.014,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 1.204,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 10.192,
+    "fare_amount": 18.9
+  },
+  {
+    "distance_km": 2.204,
+    "fare_amount": 8.0
+  },
+  {
+    "distance_km": 6.379,
+    "fare_amount": 13.7
+  },
+  {
+    "distance_km": 5.688,
+    "fare_amount": 13.7
+  },
+  {
+    "distance_km": 1.518,
+    "fare_amount": 8.0
+  },
+  {
+    "distance_km": 6.344,
+    "fare_amount": 21.0
+  },
+  {
+    "distance_km": 1.165,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 1.269,
+    "fare_amount": 5.5
+  },
+  {
+    "distance_km": 3.43,
+    "fare_amount": 8.1
+  },
+  {
+    "distance_km": 1.687,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 1.805,
+    "fare_amount": 8.5
+  },
+  {
+    "distance_km": 0.768,
+    "fare_amount": 4.1
+  },
+  {
+    "distance_km": 0.767,
+    "fare_amount": 6.0
+  },
+  {
+    "distance_km": 3.714,
+    "fare_amount": 11.0
+  },
+  {
+    "distance_km": 0.975,
+    "fare_amount": 4.0
+  },
+  {
+    "distance_km": 0.426,
+    "fare_amount": 5.0
+  },
+  {
+    "distance_km": 20.136,
+    "fare_amount": 52.0
+  },
+  {
+    "distance_km": 1.097,
+    "fare_amount": 5.3
+  },
+  {
+    "distance_km": 4.853,
+    "fare_amount": 22.5
+  },
+  {
+    "distance_km": 1.049,
+    "fare_amount": 4.1
+  },
+  {
+    "distance_km": 3.967,
+    "fare_amount": 8.9
+  },
+  {
+    "distance_km": 3.085,
+    "fare_amount": 9.3
+  },
+  {
+    "distance_km": 1.979,
+    "fare_amount": 7.0
+  },
+  {
+    "distance_km": 2.324,
+    "fare_amount": 8.5
+  },
+  {
+    "distance_km": 2.506,
+    "fare_amount": 7.5
+  },
+  {
+    "distance_km": 8.382,
+    "fare_amount": 43.0
+  },
+  {
+    "distance_km": 1.857,
+    "fare_amount": 9.3
+  },
+  {
+    "distance_km": 3.524,
+    "fare_amount": 11.0
+  },
+  {
+    "distance_km": 1.669,
+    "fare_amount": 6.9
+  },
+  {
+    "distance_km": 1.756,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 1.712,
+    "fare_amount": 7.0
+  },
+  {
+    "distance_km": 1.806,
+    "fare_amount": 7.3
+  },
+  {
+    "distance_km": 0.668,
+    "fare_amount": 4.0
+  },
+  {
+    "distance_km": 5.981,
+    "fare_amount": 14.5
+  },
+  {
+    "distance_km": 1.597,
+    "fare_amount": 12.0
+  },
+  {
+    "distance_km": 1.528,
+    "fare_amount": 6.0
+  },
+  {
+    "distance_km": 2.733,
+    "fare_amount": 9.0
+  },
+  {
+    "distance_km": 6.631,
+    "fare_amount": 18.1
+  },
+  {
+    "distance_km": 12.238,
+    "fare_amount": 39.3
+  },
+  {
+    "distance_km": 2.669,
+    "fare_amount": 13.0
+  },
+  {
+    "distance_km": 0.784,
+    "fare_amount": 5.3
+  },
+  {
+    "distance_km": 0.988,
+    "fare_amount": 4.1
+  },
+  {
+    "distance_km": 8.069,
+    "fare_amount": 16.9
+  },
+  {
+    "distance_km": 1.279,
+    "fare_amount": 7.5
+  },
+  {
+    "distance_km": 1.529,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 1.689,
+    "fare_amount": 5.3
+  },
+  {
+    "distance_km": 6.632,
+    "fare_amount": 12.1
+  },
+  {
+    "distance_km": 1.498,
+    "fare_amount": 17.5
+  },
+  {
+    "distance_km": 5.196,
+    "fare_amount": 16.5
+  },
+  {
+    "distance_km": 8.341,
+    "fare_amount": 38.5
+  },
+  {
+    "distance_km": 1.069,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 1.578,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 2.609,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 1.572,
+    "fare_amount": 5.7
+  },
+  {
+    "distance_km": 2.104,
+    "fare_amount": 7.0
+  },
+  {
+    "distance_km": 1.385,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 0.865,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 5.334,
+    "fare_amount": 14.0
+  },
+  {
+    "distance_km": 6.38,
+    "fare_amount": 14.9
+  },
+  {
+    "distance_km": 2.423,
+    "fare_amount": 8.0
+  },
+  {
+    "distance_km": 0.774,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 1.24,
+    "fare_amount": 8.0
+  },
+  {
+    "distance_km": 1.822,
+    "fare_amount": 6.0
+  },
+  {
+    "distance_km": 1.286,
+    "fare_amount": 5.5
+  },
+  {
+    "distance_km": 2.41,
+    "fare_amount": 10.5
+  },
+  {
+    "distance_km": 1.757,
+    "fare_amount": 8.5
+  },
+  {
+    "distance_km": 3.418,
+    "fare_amount": 15.0
+  },
+  {
+    "distance_km": 0.679,
+    "fare_amount": 3.3
+  },
+  {
+    "distance_km": 1.254,
+    "fare_amount": 6.0
+  },
+  {
+    "distance_km": 5.322,
+    "fare_amount": 16.5
+  },
+  {
+    "distance_km": 0.58,
+    "fare_amount": 5.5
+  },
+  {
+    "distance_km": 0.983,
+    "fare_amount": 3.3
+  },
+  {
+    "distance_km": 2.22,
+    "fare_amount": 9.3
+  },
+  {
+    "distance_km": 14.007,
+    "fare_amount": 49.33
+  },
+  {
+    "distance_km": 1.898,
+    "fare_amount": 6.0
+  },
+  {
+    "distance_km": 2.738,
+    "fare_amount": 15.0
+  },
+  {
+    "distance_km": 1.89,
+    "fare_amount": 7.7
+  },
+  {
+    "distance_km": 1.639,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 4.482,
+    "fare_amount": 12.1
+  },
+  {
+    "distance_km": 2.552,
+    "fare_amount": 9.5
+  },
+  {
+    "distance_km": 1.468,
+    "fare_amount": 5.3
+  },
+  {
+    "distance_km": 1.393,
+    "fare_amount": 5.8
+  },
+  {
+    "distance_km": 8.24,
+    "fare_amount": 18.9
+  },
+  {
+    "distance_km": 4.065,
+    "fare_amount": 12.5
+  },
+  {
+    "distance_km": 2.968,
+    "fare_amount": 10.1
+  },
+  {
+    "distance_km": 4.135,
+    "fare_amount": 10.9
+  },
+  {
+    "distance_km": 3.449,
+    "fare_amount": 9.3
+  },
+  {
+    "distance_km": 3.681,
+    "fare_amount": 3.7
+  },
+  {
+    "distance_km": 0.909,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 5.776,
+    "fare_amount": 24.0
+  },
+  {
+    "distance_km": 4.052,
+    "fare_amount": 10.9
+  },
+  {
+    "distance_km": 2.043,
+    "fare_amount": 8.5
+  },
+  {
+    "distance_km": 1.028,
+    "fare_amount": 5.5
+  },
+  {
+    "distance_km": 2.784,
+    "fare_amount": 8.9
+  },
+  {
+    "distance_km": 4.09,
+    "fare_amount": 11.7
+  },
+  {
+    "distance_km": 9.048,
+    "fare_amount": 35.33
+  },
+  {
+    "distance_km": 0.767,
+    "fare_amount": 4.9
+  },
+  {
+    "distance_km": 1.526,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 1.053,
+    "fare_amount": 5.7
+  },
+  {
+    "distance_km": 2.579,
+    "fare_amount": 9.7
+  },
+  {
+    "distance_km": 2.937,
+    "fare_amount": 11.5
+  },
+  {
+    "distance_km": 5.607,
+    "fare_amount": 14.1
+  },
+  {
+    "distance_km": 2.843,
+    "fare_amount": 9.3
+  },
+  {
+    "distance_km": 10.281,
+    "fare_amount": 36.04
+  },
+  {
+    "distance_km": 0.943,
+    "fare_amount": 3.7
+  },
+  {
+    "distance_km": 3.145,
+    "fare_amount": 9.7
+  },
+  {
+    "distance_km": 2.922,
+    "fare_amount": 10.0
+  },
+  {
+    "distance_km": 2.484,
+    "fare_amount": 7.7
+  },
+  {
+    "distance_km": 1.14,
+    "fare_amount": 4.9
+  },
+  {
+    "distance_km": 0.833,
+    "fare_amount": 8.9
+  },
+  {
+    "distance_km": 5.438,
+    "fare_amount": 23.5
+  },
+  {
+    "distance_km": 1.256,
+    "fare_amount": 7.0
+  },
+  {
+    "distance_km": 3.538,
+    "fare_amount": 11.0
+  },
+  {
+    "distance_km": 1.637,
+    "fare_amount": 5.7
+  },
+  {
+    "distance_km": 3.574,
+    "fare_amount": 10.1
+  },
+  {
+    "distance_km": 1.634,
+    "fare_amount": 5.7
+  },
+  {
+    "distance_km": 2.098,
+    "fare_amount": 9.7
+  },
+  {
+    "distance_km": 0.996,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 1.14,
+    "fare_amount": 5.5
+  },
+  {
+    "distance_km": 4.005,
+    "fare_amount": 20.5
+  },
+  {
+    "distance_km": 5.697,
+    "fare_amount": 12.9
+  },
+  {
+    "distance_km": 1.556,
+    "fare_amount": 7.7
+  },
+  {
+    "distance_km": 1.025,
+    "fare_amount": 5.5
+  },
+  {
+    "distance_km": 1.737,
+    "fare_amount": 7.7
+  },
+  {
+    "distance_km": 3.319,
+    "fare_amount": 13.0
+  },
+  {
+    "distance_km": 2.856,
+    "fare_amount": 9.3
+  },
+  {
+    "distance_km": 3.622,
+    "fare_amount": 13.0
+  },
+  {
+    "distance_km": 1.348,
+    "fare_amount": 4.1
+  },
+  {
+    "distance_km": 9.05,
+    "fare_amount": 28.0
+  },
+  {
+    "distance_km": 2.633,
+    "fare_amount": 12.5
+  },
+  {
+    "distance_km": 3.19,
+    "fare_amount": 8.9
+  },
+  {
+    "distance_km": 0.45,
+    "fare_amount": 2.9
+  },
+  {
+    "distance_km": 6.499,
+    "fare_amount": 16.9
+  },
+  {
+    "distance_km": 3.112,
+    "fare_amount": 10.0
+  },
+  {
+    "distance_km": 0.988,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 3.457,
+    "fare_amount": 12.0
+  },
+  {
+    "distance_km": 1.892,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 2.944,
+    "fare_amount": 18.5
+  },
+  {
+    "distance_km": 2.637,
+    "fare_amount": 8.0
+  },
+  {
+    "distance_km": 1.795,
+    "fare_amount": 8.1
+  },
+  {
+    "distance_km": 1.975,
+    "fare_amount": 12.0
+  },
+  {
+    "distance_km": 5.719,
+    "fare_amount": 11.7
+  },
+  {
+    "distance_km": 1.532,
+    "fare_amount": 7.0
+  },
+  {
+    "distance_km": 5.104,
+    "fare_amount": 12.9
+  },
+  {
+    "distance_km": 1.188,
+    "fare_amount": 7.0
+  },
+  {
+    "distance_km": 13.543,
+    "fare_amount": 34.9
+  },
+  {
+    "distance_km": 2.745,
+    "fare_amount": 8.9
+  },
+  {
+    "distance_km": 0.664,
+    "fare_amount": 4.1
+  },
+  {
+    "distance_km": 2.632,
+    "fare_amount": 9.0
+  },
+  {
+    "distance_km": 2.242,
+    "fare_amount": 8.0
+  },
+  {
+    "distance_km": 2.404,
+    "fare_amount": 13.0
+  },
+  {
+    "distance_km": 0.277,
+    "fare_amount": 8.9
+  },
+  {
+    "distance_km": 1.527,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 1.993,
+    "fare_amount": 8.5
+  },
+  {
+    "distance_km": 4.696,
+    "fare_amount": 12.5
+  },
+  {
+    "distance_km": 1.055,
+    "fare_amount": 6.0
+  },
+  {
+    "distance_km": 2.037,
+    "fare_amount": 8.5
+  },
+  {
+    "distance_km": 1.697,
+    "fare_amount": 10.5
+  },
+  {
+    "distance_km": 1.254,
+    "fare_amount": 5.7
+  },
+  {
+    "distance_km": 1.131,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 1.485,
+    "fare_amount": 5.7
+  },
+  {
+    "distance_km": 1.348,
+    "fare_amount": 5.3
+  },
+  {
+    "distance_km": 5.832,
+    "fare_amount": 22.0
+  },
+  {
+    "distance_km": 4.009,
+    "fare_amount": 14.1
+  },
+  {
+    "distance_km": 2.55,
+    "fare_amount": 8.0
+  },
+  {
+    "distance_km": 3.816,
+    "fare_amount": 11.3
+  },
+  {
+    "distance_km": 2.316,
+    "fare_amount": 11.5
+  },
+  {
+    "distance_km": 1.544,
+    "fare_amount": 13.3
+  },
+  {
+    "distance_km": 6.045,
+    "fare_amount": 16.1
+  },
+  {
+    "distance_km": 2.58,
+    "fare_amount": 8.0
+  },
+  {
+    "distance_km": 0.402,
+    "fare_amount": 4.9
+  },
+  {
+    "distance_km": 3.273,
+    "fare_amount": 8.1
+  },
+  {
+    "distance_km": 2.265,
+    "fare_amount": 7.3
+  },
+  {
+    "distance_km": 2.157,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 1.417,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 2.066,
+    "fare_amount": 5.3
+  },
+  {
+    "distance_km": 6.823,
+    "fare_amount": 17.5
+  },
+  {
+    "distance_km": 5.532,
+    "fare_amount": 16.9
+  },
+  {
+    "distance_km": 1.088,
+    "fare_amount": 7.3
+  },
+  {
+    "distance_km": 3.032,
+    "fare_amount": 10.1
+  },
+  {
+    "distance_km": 1.335,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 1.173,
+    "fare_amount": 5.7
+  },
+  {
+    "distance_km": 8.421,
+    "fare_amount": 24.0
+  },
+  {
+    "distance_km": 4.909,
+    "fare_amount": 11.7
+  },
+  {
+    "distance_km": 1.983,
+    "fare_amount": 6.9
+  },
+  {
+    "distance_km": 4.062,
+    "fare_amount": 10.1
+  },
+  {
+    "distance_km": 2.571,
+    "fare_amount": 11.5
+  },
+  {
+    "distance_km": 2.994,
+    "fare_amount": 10.1
+  },
+  {
+    "distance_km": 1.921,
+    "fare_amount": 10.1
+  },
+  {
+    "distance_km": 2.069,
+    "fare_amount": 12.5
+  },
+  {
+    "distance_km": 8.856,
+    "fare_amount": 20.9
+  },
+  {
+    "distance_km": 1.05,
+    "fare_amount": 5.3
+  },
+  {
+    "distance_km": 3.753,
+    "fare_amount": 10.5
+  },
+  {
+    "distance_km": 1.956,
+    "fare_amount": 6.9
+  },
+  {
+    "distance_km": 0.675,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 1.548,
+    "fare_amount": 7.7
+  },
+  {
+    "distance_km": 2.857,
+    "fare_amount": 8.9
+  },
+  {
+    "distance_km": 0.779,
+    "fare_amount": 5.0
+  },
+  {
+    "distance_km": 0.222,
+    "fare_amount": 2.5
+  },
+  {
+    "distance_km": 4.53,
+    "fare_amount": 12.1
+  },
+  {
+    "distance_km": 1.509,
+    "fare_amount": 6.0
+  },
+  {
+    "distance_km": 2.139,
+    "fare_amount": 12.0
+  },
+  {
+    "distance_km": 5.688,
+    "fare_amount": 13.3
+  },
+  {
+    "distance_km": 1.094,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 3.433,
+    "fare_amount": 9.3
+  },
+  {
+    "distance_km": 1.626,
+    "fare_amount": 5.7
+  },
+  {
+    "distance_km": 2.439,
+    "fare_amount": 7.3
+  },
+  {
+    "distance_km": 3.249,
+    "fare_amount": 11.5
+  },
+  {
+    "distance_km": 1.084,
+    "fare_amount": 5.7
+  },
+  {
+    "distance_km": 6.057,
+    "fare_amount": 14.9
+  },
+  {
+    "distance_km": 1.79,
+    "fare_amount": 7.0
+  },
+  {
+    "distance_km": 5.171,
+    "fare_amount": 16.9
+  },
+  {
+    "distance_km": 1.051,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 2.33,
+    "fare_amount": 8.1
+  },
+  {
+    "distance_km": 0.92,
+    "fare_amount": 4.9
+  },
+  {
+    "distance_km": 1.48,
+    "fare_amount": 8.5
+  },
+  {
+    "distance_km": 2.209,
+    "fare_amount": 6.9
+  },
+  {
+    "distance_km": 2.082,
+    "fare_amount": 10.5
+  },
+  {
+    "distance_km": 0.879,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 2.311,
+    "fare_amount": 8.1
+  },
+  {
+    "distance_km": 1.742,
+    "fare_amount": 6.9
+  },
+  {
+    "distance_km": 8.724,
+    "fare_amount": 22.5
+  },
+  {
+    "distance_km": 4.748,
+    "fare_amount": 16.5
+  },
+  {
+    "distance_km": 2.414,
+    "fare_amount": 11.3
+  },
+  {
+    "distance_km": 2.219,
+    "fare_amount": 8.9
+  },
+  {
+    "distance_km": 0.856,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 0.67,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 2.234,
+    "fare_amount": 16.9
+  },
+  {
+    "distance_km": 0.995,
+    "fare_amount": 5.3
+  },
+  {
+    "distance_km": 4.393,
+    "fare_amount": 18.5
+  },
+  {
+    "distance_km": 3.135,
+    "fare_amount": 16.5
+  },
+  {
+    "distance_km": 5.905,
+    "fare_amount": 16.0
+  },
+  {
+    "distance_km": 0.562,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 0.85,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 5.044,
+    "fare_amount": 15.5
+  },
+  {
+    "distance_km": 0.564,
+    "fare_amount": 8.1
+  },
+  {
+    "distance_km": 3.327,
+    "fare_amount": 10.5
+  },
+  {
+    "distance_km": 0.869,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 1.4,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 2.992,
+    "fare_amount": 8.9
+  },
+  {
+    "distance_km": 1.425,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 2.681,
+    "fare_amount": 10.0
+  },
+  {
+    "distance_km": 1.896,
+    "fare_amount": 8.5
+  },
+  {
+    "distance_km": 3.346,
+    "fare_amount": 12.0
+  },
+  {
+    "distance_km": 1.76,
+    "fare_amount": 7.3
+  },
+  {
+    "distance_km": 17.415,
+    "fare_amount": 30.9
+  },
+  {
+    "distance_km": 1.644,
+    "fare_amount": 10.0
+  },
+  {
+    "distance_km": 2.106,
+    "fare_amount": 8.0
+  },
+  {
+    "distance_km": 1.114,
+    "fare_amount": 8.1
+  },
+  {
+    "distance_km": 4.672,
+    "fare_amount": 13.1
+  },
+  {
+    "distance_km": 0.536,
+    "fare_amount": 6.0
+  },
+  {
+    "distance_km": 2.524,
+    "fare_amount": 9.0
+  },
+  {
+    "distance_km": 2.65,
+    "fare_amount": 9.7
+  },
+  {
+    "distance_km": 1.594,
+    "fare_amount": 6.0
+  },
+  {
+    "distance_km": 1.817,
+    "fare_amount": 6.6
+  },
+  {
+    "distance_km": 0.609,
+    "fare_amount": 3.3
+  },
+  {
+    "distance_km": 1.36,
+    "fare_amount": 8.5
+  },
+  {
+    "distance_km": 1.349,
+    "fare_amount": 10.5
+  },
+  {
+    "distance_km": 19.09,
+    "fare_amount": 51.0
+  },
+  {
+    "distance_km": 1.595,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 1.521,
+    "fare_amount": 5.3
+  },
+  {
+    "distance_km": 1.32,
+    "fare_amount": 11.5
+  },
+  {
+    "distance_km": 2.214,
+    "fare_amount": 6.9
+  },
+  {
+    "distance_km": 1.725,
+    "fare_amount": 7.3
+  },
+  {
+    "distance_km": 0.566,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 4.87,
+    "fare_amount": 15.0
+  },
+  {
+    "distance_km": 1.009,
+    "fare_amount": 7.5
+  },
+  {
+    "distance_km": 19.61,
+    "fare_amount": 49.8
+  },
+  {
+    "distance_km": 1.202,
+    "fare_amount": 5.3
+  },
+  {
+    "distance_km": 2.875,
+    "fare_amount": 8.5
+  },
+  {
+    "distance_km": 2.247,
+    "fare_amount": 6.9
+  },
+  {
+    "distance_km": 12.531,
+    "fare_amount": 26.1
+  },
+  {
+    "distance_km": 1.983,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 3.819,
+    "fare_amount": 9.7
+  },
+  {
+    "distance_km": 4.494,
+    "fare_amount": 15.5
+  },
+  {
+    "distance_km": 0.757,
+    "fare_amount": 3.3
+  },
+  {
+    "distance_km": 3.705,
+    "fare_amount": 8.1
+  },
+  {
+    "distance_km": 2.1,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 3.653,
+    "fare_amount": 8.9
+  },
+  {
+    "distance_km": 5.976,
+    "fare_amount": 14.5
+  },
+  {
+    "distance_km": 1.93,
+    "fare_amount": 7.3
+  },
+  {
+    "distance_km": 2.984,
+    "fare_amount": 14.5
+  },
+  {
+    "distance_km": 2.845,
+    "fare_amount": 9.7
+  },
+  {
+    "distance_km": 2.618,
+    "fare_amount": 11.5
+  },
+  {
+    "distance_km": 1.921,
+    "fare_amount": 7.3
+  },
+  {
+    "distance_km": 1.806,
+    "fare_amount": 10.0
+  },
+  {
+    "distance_km": 1.638,
+    "fare_amount": 6.0
+  },
+  {
+    "distance_km": 0.58,
+    "fare_amount": 4.0
+  },
+  {
+    "distance_km": 1.43,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 1.012,
+    "fare_amount": 4.1
+  },
+  {
+    "distance_km": 4.527,
+    "fare_amount": 12.1
+  },
+  {
+    "distance_km": 0.973,
+    "fare_amount": 5.5
+  },
+  {
+    "distance_km": 1.052,
+    "fare_amount": 5.7
+  },
+  {
+    "distance_km": 6.228,
+    "fare_amount": 19.5
+  },
+  {
+    "distance_km": 3.921,
+    "fare_amount": 13.0
+  },
+  {
+    "distance_km": 0.59,
+    "fare_amount": 5.0
+  },
+  {
+    "distance_km": 0.955,
+    "fare_amount": 5.3
+  },
+  {
+    "distance_km": 2.11,
+    "fare_amount": 49.57
+  },
+  {
+    "distance_km": 0.904,
+    "fare_amount": 5.0
+  },
+  {
+    "distance_km": 0.715,
+    "fare_amount": 4.0
+  },
+  {
+    "distance_km": 1.474,
+    "fare_amount": 5.5
+  },
+  {
+    "distance_km": 1.645,
+    "fare_amount": 11.7
+  },
+  {
+    "distance_km": 1.152,
+    "fare_amount": 4.1
+  },
+  {
+    "distance_km": 1.772,
+    "fare_amount": 7.0
+  },
+  {
+    "distance_km": 3.831,
+    "fare_amount": 28.0
+  },
+  {
+    "distance_km": 4.908,
+    "fare_amount": 11.0
+  },
+  {
+    "distance_km": 1.208,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 2.805,
+    "fare_amount": 13.5
+  },
+  {
+    "distance_km": 3.023,
+    "fare_amount": 11.5
+  },
+  {
+    "distance_km": 7.681,
+    "fare_amount": 15.3
+  },
+  {
+    "distance_km": 3.501,
+    "fare_amount": 10.5
+  },
+  {
+    "distance_km": 5.173,
+    "fare_amount": 10.5
+  },
+  {
+    "distance_km": 1.072,
+    "fare_amount": 8.0
+  },
+  {
+    "distance_km": 2.001,
+    "fare_amount": 8.5
+  },
+  {
+    "distance_km": 8.137,
+    "fare_amount": 23.5
+  },
+  {
+    "distance_km": 1.02,
+    "fare_amount": 6.0
+  },
+  {
+    "distance_km": 5.664,
+    "fare_amount": 13.3
+  },
+  {
+    "distance_km": 5.537,
+    "fare_amount": 17.0
+  },
+  {
+    "distance_km": 3.041,
+    "fare_amount": 6.9
+  },
+  {
+    "distance_km": 3.937,
+    "fare_amount": 12.5
+  },
+  {
+    "distance_km": 0.742,
+    "fare_amount": 4.1
+  },
+  {
+    "distance_km": 7.078,
+    "fare_amount": 16.5
+  },
+  {
+    "distance_km": 8.882,
+    "fare_amount": 16.9
+  },
+  {
+    "distance_km": 2.563,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 10.636,
+    "fare_amount": 17.3
+  },
+  {
+    "distance_km": 2.003,
+    "fare_amount": 9.0
+  },
+  {
+    "distance_km": 2.584,
+    "fare_amount": 7.3
+  },
+  {
+    "distance_km": 1.772,
+    "fare_amount": 8.0
+  },
+  {
+    "distance_km": 3.594,
+    "fare_amount": 11.7
+  },
+  {
+    "distance_km": 1.364,
+    "fare_amount": 6.9
+  },
+  {
+    "distance_km": 3.86,
+    "fare_amount": 10.5
+  },
+  {
+    "distance_km": 4.693,
+    "fare_amount": 14.5
+  },
+  {
+    "distance_km": 3.947,
+    "fare_amount": 14.0
+  },
+  {
+    "distance_km": 0.568,
+    "fare_amount": 5.3
+  },
+  {
+    "distance_km": 1.756,
+    "fare_amount": 7.5
+  },
+  {
+    "distance_km": 1.224,
+    "fare_amount": 5.3
+  },
+  {
+    "distance_km": 1.112,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 0.796,
+    "fare_amount": 5.0
+  },
+  {
+    "distance_km": 0.698,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 0.694,
+    "fare_amount": 3.7
+  },
+  {
+    "distance_km": 0.558,
+    "fare_amount": 3.7
+  },
+  {
+    "distance_km": 1.354,
+    "fare_amount": 5.7
+  },
+  {
+    "distance_km": 2.173,
+    "fare_amount": 12.0
+  },
+  {
+    "distance_km": 1.342,
+    "fare_amount": 5.3
+  },
+  {
+    "distance_km": 1.095,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 3.588,
+    "fare_amount": 9.5
+  },
+  {
+    "distance_km": 8.516,
+    "fare_amount": 15.3
+  },
+  {
+    "distance_km": 1.392,
+    "fare_amount": 5.3
+  },
+  {
+    "distance_km": 2.521,
+    "fare_amount": 9.0
+  },
+  {
+    "distance_km": 0.832,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 5.471,
+    "fare_amount": 14.5
+  },
+  {
+    "distance_km": 1.478,
+    "fare_amount": 7.3
+  },
+  {
+    "distance_km": 2.01,
+    "fare_amount": 8.5
+  },
+  {
+    "distance_km": 0.572,
+    "fare_amount": 3.7
+  },
+  {
+    "distance_km": 0.977,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 2.242,
+    "fare_amount": 6.9
+  },
+  {
+    "distance_km": 1.87,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 2.557,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 2.013,
+    "fare_amount": 8.5
+  },
+  {
+    "distance_km": 6.617,
+    "fare_amount": 18.5
+  },
+  {
+    "distance_km": 1.338,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 8.48,
+    "fare_amount": 19.3
+  },
+  {
+    "distance_km": 0.931,
+    "fare_amount": 5.0
+  },
+  {
+    "distance_km": 3.918,
+    "fare_amount": 16.0
+  },
+  {
+    "distance_km": 2.721,
+    "fare_amount": 10.5
+  },
+  {
+    "distance_km": 10.966,
+    "fare_amount": 50.8
+  },
+  {
+    "distance_km": 0.785,
+    "fare_amount": 4.9
+  },
+  {
+    "distance_km": 2.571,
+    "fare_amount": 13.3
+  },
+  {
+    "distance_km": 1.512,
+    "fare_amount": 5.7
+  },
+  {
+    "distance_km": 0.174,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 1.325,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 2.727,
+    "fare_amount": 7.7
+  },
+  {
+    "distance_km": 1.471,
+    "fare_amount": 6.0
+  },
+  {
+    "distance_km": 3.254,
+    "fare_amount": 14.5
+  },
+  {
+    "distance_km": 1.205,
+    "fare_amount": 8.5
+  },
+  {
+    "distance_km": 1.375,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 1.194,
+    "fare_amount": 5.7
+  },
+  {
+    "distance_km": 2.924,
+    "fare_amount": 9.5
+  },
+  {
+    "distance_km": 3.782,
+    "fare_amount": 8.9
+  },
+  {
+    "distance_km": 7.757,
+    "fare_amount": 4.9
+  },
+  {
+    "distance_km": 0.5,
+    "fare_amount": 6.9
+  },
+  {
+    "distance_km": 2.694,
+    "fare_amount": 7.3
+  },
+  {
+    "distance_km": 2.922,
+    "fare_amount": 10.9
+  },
+  {
+    "distance_km": 2.91,
+    "fare_amount": 9.3
+  },
+  {
+    "distance_km": 2.599,
+    "fare_amount": 7.3
+  },
+  {
+    "distance_km": 6.336,
+    "fare_amount": 20.5
+  },
+  {
+    "distance_km": 1.214,
+    "fare_amount": 8.1
+  },
+  {
+    "distance_km": 10.65,
+    "fare_amount": 25.95
+  },
+  {
+    "distance_km": 2.431,
+    "fare_amount": 9.0
+  },
+  {
+    "distance_km": 3.947,
+    "fare_amount": 4.0
+  },
+  {
+    "distance_km": 5.46,
+    "fare_amount": 17.5
+  },
+  {
+    "distance_km": 4.762,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 1.442,
+    "fare_amount": 9.5
+  },
+  {
+    "distance_km": 3.573,
+    "fare_amount": 6.9
+  },
+  {
+    "distance_km": 0.635,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 1.881,
+    "fare_amount": 7.0
+  },
+  {
+    "distance_km": 10.723,
+    "fare_amount": 36.83
+  },
+  {
+    "distance_km": 2.686,
+    "fare_amount": 7.3
+  },
+  {
+    "distance_km": 1.492,
+    "fare_amount": 5.7
+  },
+  {
+    "distance_km": 5.41,
+    "fare_amount": 16.1
+  },
+  {
+    "distance_km": 6.841,
+    "fare_amount": 16.0
+  },
+  {
+    "distance_km": 3.764,
+    "fare_amount": 9.7
+  },
+  {
+    "distance_km": 3.521,
+    "fare_amount": 11.5
+  },
+  {
+    "distance_km": 5.028,
+    "fare_amount": 14.9
+  },
+  {
+    "distance_km": 4.08,
+    "fare_amount": 15.5
+  },
+  {
+    "distance_km": 4.26,
+    "fare_amount": 9.7
+  },
+  {
+    "distance_km": 19.959,
+    "fare_amount": 57.33
+  },
+  {
+    "distance_km": 3.242,
+    "fare_amount": 12.1
+  },
+  {
+    "distance_km": 1.738,
+    "fare_amount": 5.3
+  },
+  {
+    "distance_km": 2.564,
+    "fare_amount": 10.0
+  },
+  {
+    "distance_km": 1.568,
+    "fare_amount": 8.5
+  },
+  {
+    "distance_km": 1.412,
+    "fare_amount": 5.7
+  },
+  {
+    "distance_km": 3.103,
+    "fare_amount": 14.5
+  },
+  {
+    "distance_km": 0.132,
+    "fare_amount": 2.9
+  },
+  {
+    "distance_km": 9.995,
+    "fare_amount": 40.33
+  },
+  {
+    "distance_km": 1.903,
+    "fare_amount": 9.5
+  },
+  {
+    "distance_km": 0.518,
+    "fare_amount": 3.5
+  },
+  {
+    "distance_km": 1.272,
+    "fare_amount": 5.3
+  },
+  {
+    "distance_km": 1.587,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 0.695,
+    "fare_amount": 5.0
+  },
+  {
+    "distance_km": 6.322,
+    "fare_amount": 16.5
+  },
+  {
+    "distance_km": 1.043,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 2.642,
+    "fare_amount": 9.3
+  },
+  {
+    "distance_km": 2.967,
+    "fare_amount": 15.5
+  },
+  {
+    "distance_km": 13.255,
+    "fare_amount": 29.5
+  },
+  {
+    "distance_km": 1.111,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 1.16,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 2.003,
+    "fare_amount": 5.3
+  },
+  {
+    "distance_km": 3.517,
+    "fare_amount": 17.3
+  },
+  {
+    "distance_km": 1.214,
+    "fare_amount": 5.0
+  },
+  {
+    "distance_km": 4.621,
+    "fare_amount": 11.3
+  },
+  {
+    "distance_km": 1.461,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 1.708,
+    "fare_amount": 7.3
+  },
+  {
+    "distance_km": 4.387,
+    "fare_amount": 12.5
+  },
+  {
+    "distance_km": 0.535,
+    "fare_amount": 3.7
+  },
+  {
+    "distance_km": 2.299,
+    "fare_amount": 9.5
+  },
+  {
+    "distance_km": 1.868,
+    "fare_amount": 6.9
+  },
+  {
+    "distance_km": 2.179,
+    "fare_amount": 7.7
+  },
+  {
+    "distance_km": 2.061,
+    "fare_amount": 8.5
+  },
+  {
+    "distance_km": 4.616,
+    "fare_amount": 15.7
+  },
+  {
+    "distance_km": 1.279,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 2.551,
+    "fare_amount": 11.7
+  },
+  {
+    "distance_km": 0.863,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 0.171,
+    "fare_amount": 3.7
+  },
+  {
+    "distance_km": 1.964,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 6.331,
+    "fare_amount": 21.0
+  },
+  {
+    "distance_km": 0.834,
+    "fare_amount": 9.5
+  },
+  {
+    "distance_km": 2.014,
+    "fare_amount": 7.3
+  },
+  {
+    "distance_km": 2.765,
+    "fare_amount": 10.0
+  },
+  {
+    "distance_km": 14.018,
+    "fare_amount": 121.0
+  },
+  {
+    "distance_km": 3.56,
+    "fare_amount": 12.9
+  },
+  {
+    "distance_km": 1.233,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 1.683,
+    "fare_amount": 10.1
+  },
+  {
+    "distance_km": 4.407,
+    "fare_amount": 14.9
+  },
+  {
+    "distance_km": 1.192,
+    "fare_amount": 6.9
+  },
+  {
+    "distance_km": 1.52,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 2.708,
+    "fare_amount": 12.9
+  },
+  {
+    "distance_km": 3.078,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 1.332,
+    "fare_amount": 7.3
+  },
+  {
+    "distance_km": 3.704,
+    "fare_amount": 15.0
+  },
+  {
+    "distance_km": 6.027,
+    "fare_amount": 18.0
+  },
+  {
+    "distance_km": 6.428,
+    "fare_amount": 22.67
+  },
+  {
+    "distance_km": 7.207,
+    "fare_amount": 16.1
+  },
+  {
+    "distance_km": 2.504,
+    "fare_amount": 8.5
+  },
+  {
+    "distance_km": 31.014,
+    "fare_amount": 79.01
+  },
+  {
+    "distance_km": 2.293,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 2.584,
+    "fare_amount": 9.7
+  },
+  {
+    "distance_km": 3.251,
+    "fare_amount": 9.7
+  },
+  {
+    "distance_km": 5.443,
+    "fare_amount": 17.5
+  },
+  {
+    "distance_km": 4.046,
+    "fare_amount": 11.7
+  },
+  {
+    "distance_km": 2.521,
+    "fare_amount": 10.0
+  },
+  {
+    "distance_km": 2.402,
+    "fare_amount": 8.5
+  },
+  {
+    "distance_km": 1.548,
+    "fare_amount": 6.9
+  },
+  {
+    "distance_km": 1.177,
+    "fare_amount": 7.5
+  },
+  {
+    "distance_km": 3.707,
+    "fare_amount": 8.9
+  },
+  {
+    "distance_km": 5.407,
+    "fare_amount": 11.7
+  },
+  {
+    "distance_km": 6.93,
+    "fare_amount": 14.9
+  },
+  {
+    "distance_km": 1.382,
+    "fare_amount": 6.1
+  },
+  {
+    "distance_km": 3.241,
+    "fare_amount": 17.5
+  },
+  {
+    "distance_km": 2.791,
+    "fare_amount": 13.3
+  },
+  {
+    "distance_km": 1.201,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 0.741,
+    "fare_amount": 4.1
+  },
+  {
+    "distance_km": 3.298,
+    "fare_amount": 11.0
+  },
+  {
+    "distance_km": 2.096,
+    "fare_amount": 7.5
+  },
+  {
+    "distance_km": 0.686,
+    "fare_amount": 4.5
+  },
+  {
+    "distance_km": 1.184,
+    "fare_amount": 5.5
+  },
+  {
+    "distance_km": 1.179,
+    "fare_amount": 4.9
+  },
+  {
+    "distance_km": 1.395,
+    "fare_amount": 4.9
+  },
+  {
+    "distance_km": 1.788,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 1.899,
+    "fare_amount": 5.7
+  },
+  {
+    "distance_km": 1.789,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 1.381,
+    "fare_amount": 6.5
+  },
+  {
+    "distance_km": 1.399,
+    "fare_amount": 6.0
+  },
+  {
+    "distance_km": 1.682,
+    "fare_amount": 7.3
+  },
+  {
+    "distance_km": 2.476,
+    "fare_amount": 11.3
+  },
+  {
+    "distance_km": 2.551,
+    "fare_amount": 11.3
+  },
+  {
+    "distance_km": 6.483,
+    "fare_amount": 19.5
+  }
+]

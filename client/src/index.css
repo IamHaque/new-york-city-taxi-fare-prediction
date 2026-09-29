@@ -26,61 +26,122 @@ input[type='datetime-local']::-webkit-calendar-picker-indicator {
   opacity: 0.7;
 }
 
+/* Distance pill on the map's route line (PRD v4, Epic 3 / Story 3.2). Scoped with an extra
+   class + ancestor selector so it beats Leaflet's own .leaflet-tooltip rules regardless of
+   CSS order, and repaints from tokens in every theme. */
+.leaflet-container .leaflet-tooltip.distance-tooltip {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--card-foreground);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 10px;
+  border-radius: 9999px;
+}
+
 @layer base {
   :root {
-    /* LIGHT THEME — an original extension of the reference, not from the source file.
-       Design logic: warm off-white background (not clinical pure white) to match the dark
-       theme's warm off-black; white cards sit lighter than the page background, mirroring how
-       the dark theme's card (#1b1e26) sits lighter than its background (#12141a); primary/
-       destructive/success are darkened versions of the dark theme's hues (same family, tuned
-       for AA contrast against light surfaces). */
-    --background: #f7f6f3;
-    --foreground: #1b1e26;
+    /* LIGHT THEME — blue/amber "city" palette from PRD v4 §3.1 (supersedes PRD v3's purple set).
+       Raw hex custom properties, no hsl() wrapper — matches this file's existing convention. */
+    --background: #f7f8fa;
+    --foreground: #12172a;
     --card: #ffffff;
-    --card-foreground: #1b1e26;
+    --card-foreground: #12172a;
     --popover: #ffffff;
-    --popover-foreground: #1b1e26;
-    --primary: #6552d6;
-    --primary-foreground: #ffffff;
-    --secondary: #eeece6;
-    --secondary-foreground: #1b1e26;
-    --muted: #eeece6;
-    --muted-foreground: #6b6f7a;
-    --accent: #eeece6;
-    --accent-foreground: #1b1e26;
-    --destructive: #c8442f;
+    --popover-foreground: #12172a;
+    --primary: #12172a;
+    --primary-foreground: #fafafa;
+    --secondary: #eef0f4;
+    --secondary-foreground: #12172a;
+    --muted: #eef0f4;
+    --muted-foreground: #5b6272;
+    --accent: #eaecf1;
+    --accent-foreground: #12172a;
+    --destructive: #c22f22;
     --destructive-foreground: #ffffff;
-    --success: #2f8f5b;
+    --success: #0e8a5f;
     --success-foreground: #ffffff;
-    --border: #dcdad3;
-    --input: #dcdad3;
-    --ring: #6552d6;
-    --radius: 0.375rem; /* 6px flat — shared with dark mode, matches reference's --radius exactly */
+    --border: #dfe2e8;
+    --input: #d5d9e0;
+    --ring: #2f6fed;
+    --brand: #f5bb2e;
+    --brand-foreground: #241a04;
+    --pickup: #0e9f6e;
+    --dropoff: #e1355e;
+    --chart-1: #2f6fed;
+    --chart-2: #f5bb2e;
+    --radius: 0.625rem;
   }
 
-  /* DARK THEME — extracted directly from Bingo_Bust_-_Tracker.html, unchanged from the source. */
-  .dark {
-    --background: #12141a;
-    --foreground: #edebe3;
-    --card: #1b1e26;
-    --card-foreground: #edebe3;
-    --popover: #1b1e26;
-    --popover-foreground: #edebe3;
-    --primary: #7c6fe0;
-    --primary-foreground: #ffffff;
-    --secondary: #232733;
-    --secondary-foreground: #edebe3;
-    --muted: #232733;
-    --muted-foreground: #8d919c;
-    --accent: #232733;
-    --accent-foreground: #edebe3;
-    --destructive: #e15b4e;
+  /* DARK THEME — same palette family, dark surfaces. The shared selector list covers both the
+     explicit `.dark` class (Tailwind darkMode:'class') and an explicit data-theme="dark"
+     attribute set by ThemeProvider's tri-state toggle. */
+  .dark,
+  :root[data-theme='dark'] {
+    --background: #0b0e16;
+    --foreground: #f2f3f6;
+    --card: #131826;
+    --card-foreground: #f2f3f6;
+    --popover: #131826;
+    --popover-foreground: #f2f3f6;
+    --primary: #f2f3f6;
+    --primary-foreground: #12172a;
+    --secondary: #1c2233;
+    --secondary-foreground: #f2f3f6;
+    --muted: #1c2233;
+    --muted-foreground: #9aa1b2;
+    --accent: #202739;
+    --accent-foreground: #f2f3f6;
+    --destructive: #e1584a;
     --destructive-foreground: #ffffff;
-    --success: #4fa97a;
-    --success-foreground: #12141a;
-    --border: #2e323d;
-    --input: #2e323d;
-    --ring: #7c6fe0;
+    --success: #38b787;
+    --success-foreground: #0b0e16;
+    --border: #232a3d;
+    --input: #2b3348;
+    --ring: #6f9bff;
+    --brand: #f5bb2e;
+    --brand-foreground: #241a04;
+    --pickup: #34d399;
+    --dropoff: #fb7185;
+    --chart-1: #6f9bff;
+    --chart-2: #f5bb2e;
+  }
+
+  /* System-preference dark mode: when ThemeProvider's preference is 'system' it removes the
+     data-theme attribute entirely, so this media block is the only thing that can apply there.
+     Values must resolve identically to the .dark block above (PRD v4 §3.1). */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+      --background: #0b0e16;
+      --foreground: #f2f3f6;
+      --card: #131826;
+      --card-foreground: #f2f3f6;
+      --popover: #131826;
+      --popover-foreground: #f2f3f6;
+      --primary: #f2f3f6;
+      --primary-foreground: #12172a;
+      --secondary: #1c2233;
+      --secondary-foreground: #f2f3f6;
+      --muted: #1c2233;
+      --muted-foreground: #9aa1b2;
+      --accent: #202739;
+      --accent-foreground: #f2f3f6;
+      --destructive: #e1584a;
+      --destructive-foreground: #ffffff;
+      --success: #38b787;
+      --success-foreground: #0b0e16;
+      --border: #232a3d;
+      --input: #2b3348;
+      --ring: #6f9bff;
+      --brand: #f5bb2e;
+      --brand-foreground: #241a04;
+      --pickup: #34d399;
+      --dropoff: #fb7185;
+      --chart-1: #6f9bff;
+      --chart-2: #f5bb2e;
+    }
   }
 }
 

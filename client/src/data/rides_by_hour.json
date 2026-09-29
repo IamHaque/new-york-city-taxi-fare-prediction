@@ -1,98 +1,98 @@
 [
   {
     "hour": 0,
-    "avgFare": 11.58
+    "rides": 78799
   },
   {
     "hour": 1,
-    "avgFare": 11.33
+    "rides": 58296
   },
   {
     "hour": 2,
-    "avgFare": 11.36
+    "rides": 43479
   },
   {
     "hour": 3,
-    "avgFare": 11.74
+    "rides": 32103
   },
   {
     "hour": 4,
-    "avgFare": 13.42
+    "rides": 23369
   },
   {
     "hour": 5,
-    "avgFare": 14.98
+    "rides": 19371
   },
   {
     "hour": 6,
-    "avgFare": 12.19
+    "rides": 41083
   },
   {
     "hour": 7,
-    "avgFare": 10.95
+    "rides": 72023
   },
   {
     "hour": 8,
-    "avgFare": 10.84
+    "rides": 90790
   },
   {
     "hour": 9,
-    "avgFare": 10.82
+    "rides": 93562
   },
   {
     "hour": 10,
-    "avgFare": 10.84
+    "rides": 90472
   },
   {
     "hour": 11,
-    "avgFare": 11.11
+    "rides": 93292
   },
   {
     "hour": 12,
-    "avgFare": 11.09
+    "rides": 98315
   },
   {
     "hour": 13,
-    "avgFare": 11.52
+    "rides": 98238
   },
   {
     "hour": 14,
-    "avgFare": 11.84
+    "rides": 101242
   },
   {
     "hour": 15,
-    "avgFare": 11.9
+    "rides": 96158
   },
   {
     "hour": 16,
-    "avgFare": 11.81
+    "rides": 82299
   },
   {
     "hour": 17,
-    "avgFare": 11.43
+    "rides": 98303
   },
   {
     "hour": 18,
-    "avgFare": 10.85
+    "rides": 120597
   },
   {
     "hour": 19,
-    "avgFare": 10.53
+    "rides": 125133
   },
   {
     "hour": 20,
-    "avgFare": 10.72
+    "rides": 117638
   },
   {
     "hour": 21,
-    "avgFare": 10.95
+    "rides": 114981
   },
   {
     "hour": 22,
-    "avgFare": 11.23
+    "rides": 111494
   },
   {
     "hour": 23,
-    "avgFare": 11.57
+    "rides": 98963
   }
 ]

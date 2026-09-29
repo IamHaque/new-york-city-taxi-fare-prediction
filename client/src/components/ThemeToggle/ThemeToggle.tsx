@@ -1,23 +1,44 @@
-import { Moon, Sun } from 'lucide-react';
+import { Monitor, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useTheme } from '@/context/ThemeProvider';
+import { useTheme, type ThemePreference } from '@/context/ThemeProvider';
+
+const CYCLE: Record<ThemePreference, ThemePreference> = {
+  system: 'light',
+  light: 'dark',
+  dark: 'system',
+};
+
+const NEXT_LABEL: Record<ThemePreference, string> = {
+  system: 'Switch to light mode',
+  light: 'Switch to dark mode',
+  dark: 'Switch to system theme',
+};
+
+const ICONS: Record<ThemePreference, typeof Monitor> = {
+  system: Monitor,
+  light: Sun,
+  dark: Moon,
+};
 
 /**
- * Icon button in the app header that flips between light and dark theme.
- * Shows a Sun icon in dark mode (click to go light) and a Moon icon in light mode (click to go dark),
- * i.e. the icon represents the theme you'll SWITCH TO, which is the common UX convention.
+ * Header control cycling system → light → dark → system (PRD v4, Story 9.2), matching the
+ * reference mockup's tri-state toggle: icon shows the current state, aria-label announces the
+ * state the next click switches to, and the text label hides on narrow viewports.
  */
 export function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme();
+  const { preference, setPreference } = useTheme();
+  const Icon = ICONS[preference];
 
   return (
     <Button
       variant="outline"
-      size="icon"
-      onClick={toggleTheme}
-      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+      size="sm"
+      onClick={() => setPreference(CYCLE[preference])}
+      aria-label={NEXT_LABEL[preference]}
+      aria-live="polite"
     >
-      {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+      <Icon className="h-4 w-4" aria-hidden="true" />
+      <span className="hidden capitalize sm:inline">{preference}</span>
     </Button>
   );
 }

@@ -1,0 +1,22 @@
+[
+  {
+    "model": "Hardcoded (mean)",
+    "rmse": 9.2793
+  },
+  {
+    "model": "Distance only",
+    "rmse": 4.0791
+  },
+  {
+    "model": "Linear Regression",
+    "rmse": 4.0747
+  },
+  {
+    "model": "Random Forest",
+    "rmse": 3.9231
+  },
+  {
+    "model": "XGBoost (production)",
+    "rmse": 2.8391
+  }
+]
