@@ -23,8 +23,18 @@ export interface PredictionResult {
 }
 
 /**
- * ParsedTripDetails - the shape of data returned from the Flask /parse-trip endpoint (Epic 5).
- * Optional coordinate fields are populated by frontend landmark lookup (Story 5.2).
+ * ParsedTripDetails - the shape of data returned from the Flask /parse-trip endpoint.
+ *
+ * The server now resolves each landmark name to coordinates itself (scripts/shared/landmarks.py)
+ * and, when BOTH sides resolve, runs the same model inference /predict uses and includes
+ * fare_amount/distance_km directly in this response. pickup_lat/pickup_lon/dropoff_lat/
+ * dropoff_lon are therefore normally server-provided; enrichParsedTripWithCoordinates() in
+ * utils/landmarks.ts only falls back to the client-side table when the server didn't supply them.
+ *
+ * pickup_resolved/dropoff_resolved report whether the server could resolve each landmark name at
+ * all. When either is false, fare_amount/distance_km are absent and `warning` explains why —
+ * the parsed time/passenger fields are still usable to pre-fill the form even when a location
+ * couldn't be resolved.
  */
 export interface ParsedTripDetails {
   pickup_landmark: string;
@@ -38,6 +48,11 @@ export interface ParsedTripDetails {
   pickup_lon?: number;
   dropoff_lat?: number;
   dropoff_lon?: number;
+  pickup_resolved?: boolean;
+  dropoff_resolved?: boolean;
+  fare_amount?: number;
+  distance_km?: number;
+  warning?: string;
 }
 
 /**

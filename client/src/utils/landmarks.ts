@@ -55,8 +55,14 @@ export function resolveLandmark(name: string): [number, number] | null {
 }
 
 /**
- * Enriches a ParsedTripDetails with coordinates by resolving landmarks.
- * If a landmark is not found, leaves the coordinate as undefined.
+ * Enriches a ParsedTripDetails with coordinates.
+ *
+ * The server (/parse-trip) now resolves landmarks itself and usually includes pickup_lat/
+ * pickup_lon/dropoff_lat/dropoff_lon directly in the response — those are preferred here since
+ * they're what the server's fare prediction (if present) was actually computed from. This
+ * function only falls back to the client-side LANDMARK_COORDINATES table for a side the server
+ * didn't supply (e.g. an older server build, or defensively if a future prompt change ever omits
+ * coordinates for a name this client's table happens to still recognize).
  */
 export function enrichParsedTripWithCoordinates(parsed: ParsedTripDetails): ParsedTripDetails & {
   pickup_lat?: number;
@@ -64,8 +70,15 @@ export function enrichParsedTripWithCoordinates(parsed: ParsedTripDetails): Pars
   dropoff_lat?: number;
   dropoff_lon?: number;
 } {
-  const pickupCoords = resolveLandmark(parsed.pickup_landmark);
-  const dropoffCoords = resolveLandmark(parsed.dropoff_landmark);
+  const hasPickupCoords = parsed.pickup_lat !== undefined && parsed.pickup_lon !== undefined;
+  const hasDropoffCoords = parsed.dropoff_lat !== undefined && parsed.dropoff_lon !== undefined;
+
+  const pickupCoords = hasPickupCoords
+    ? ([parsed.pickup_lat, parsed.pickup_lon] as [number, number])
+    : resolveLandmark(parsed.pickup_landmark);
+  const dropoffCoords = hasDropoffCoords
+    ? ([parsed.dropoff_lat, parsed.dropoff_lon] as [number, number])
+    : resolveLandmark(parsed.dropoff_landmark);
 
   return {
     ...parsed,

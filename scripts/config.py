@@ -88,6 +88,12 @@ SERVER_HOST = '0.0.0.0'
 SERVER_PORT = 5000
 MIN_FARE_AMOUNT = 2.50
 
+# Passenger bounds the model was trained within (matches client/src/utils/validators.ts).
+# Used to clamp whatever passenger_count the LLM extracts in /parse-trip, since free-text
+# extraction can hallucinate a value outside the trained distribution.
+MIN_PASSENGERS = 1
+MAX_PASSENGERS = 6
+
 # Column mapping from API payload to model feature set
 API_COLUMN_MAPPING = {
     'pickup_lat': 'pickup_latitude',

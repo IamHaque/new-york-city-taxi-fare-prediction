@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/com
 import { parseTrip } from '@/api/fareApi';
 import type { ParsedTripDetails } from '@/types/trip';
 import { ErrorBanner } from '@/components/shared/ErrorBanner';
+import { NoticeBanner } from '@/components/shared/NoticeBanner';
 import { Loader2, MessageSquare } from 'lucide-react';
 
 interface NaturalLanguageInputProps {
@@ -14,15 +15,22 @@ interface NaturalLanguageInputProps {
 }
 
 /**
- * NaturalLanguageInput - free-text trip description parsed via LLM (Epic 5 stretch).
- * Calls parseTrip(), on success calls onParsedTrip() to pre-fill TripForm.
- * Gracefully handles malformed LLM responses.
- * Designed to be embedded within TripForm's describe mode (Level 1 card styling).
+ * NaturalLanguageInput - free-text trip description, parsed AND predicted via /parse-trip.
+ *
+ * The server resolves the LLM's landmark names to coordinates and, when both sides resolve, runs
+ * the fare model itself — so a successful parse here already carries fare_amount/distance_km.
+ * onParsedTrip() hands the full response up to App.tsx, which pre-fills the map/form and, when a
+ * prediction is present, displays it immediately (see App.tsx's handleParsedTrip).
+ *
+ * If the server could only resolve one side (or neither), the response still carries the parsed
+ * time/passenger fields plus a `warning` explaining which location needs to be placed manually —
+ * that's a partial success, not a thrown error, so it's shown as a NoticeBanner, not ErrorBanner.
  */
 export function NaturalLanguageInput({ onParsedTrip, disabled }: NaturalLanguageInputProps) {
   const [description, setDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -30,10 +38,12 @@ export function NaturalLanguageInput({ onParsedTrip, disabled }: NaturalLanguage
 
     setIsLoading(true);
     setError(null);
+    setNotice(null);
 
     try {
       const parsed = await parseTrip(description.trim());
       onParsedTrip(parsed);
+      setNotice(parsed.warning ?? null);
     } catch (err) {
       const message =
         err instanceof Error
@@ -54,7 +64,8 @@ export function NaturalLanguageInput({ onParsedTrip, disabled }: NaturalLanguage
           <CardTitle className="text-2xl font-semibold">Describe Your Trip</CardTitle>
         </div>
         <CardDescription className="text-sm">
-          Example: "3 people from Times Square to JFK airport Friday at 6pm"
+          Example: "3 people from Times Square to JFK airport Friday at 6pm" — this fills in the
+          map and form, and estimates the fare in one step.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -73,6 +84,7 @@ export function NaturalLanguageInput({ onParsedTrip, disabled }: NaturalLanguage
           </div>
 
           {error && <ErrorBanner message={error} />}
+          {notice && <NoticeBanner message={notice} />}
 
           <Button
             type="submit"
@@ -82,10 +94,10 @@ export function NaturalLanguageInput({ onParsedTrip, disabled }: NaturalLanguage
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Parsing...
+                Parsing & estimating...
               </>
             ) : (
-              'Parse Trip'
+              'Parse Trip & Estimate Fare'
             )}
           </Button>
         </form>

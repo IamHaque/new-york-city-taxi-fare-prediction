@@ -4,6 +4,7 @@ import { predictFare } from '@/api/fareApi';
 
 interface UseFarePredictionResult {
   predict: (trip: TripInput) => Promise<void>;
+  applyResult: (result: PredictionResult) => void;
   isLoading: boolean;
   error: string | null;
   result: PredictionResult | null;
@@ -32,5 +33,15 @@ export function useFarePrediction(): UseFarePredictionResult {
     }
   }
 
-  return { predict, isLoading, error, result };
+  /**
+   * Applies a prediction that was already computed server-side elsewhere — specifically,
+   * /parse-trip now runs the model itself when both landmarks resolve, so the client shouldn't
+   * fire a second /predict call just to get the same number again.
+   */
+  function applyResult(result: PredictionResult) {
+    setError(null);
+    setResult(result);
+  }
+
+  return { predict, applyResult, isLoading, error, result };
 }

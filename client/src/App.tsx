@@ -5,7 +5,7 @@ import { useFarePrediction } from '@/hooks/useFarePrediction';
 import type { ParsedTripDetails, TripInput } from '@/types/trip';
 
 function App() {
-  const { predict, isLoading, result } = useFarePrediction();
+  const { predict, applyResult, isLoading, result } = useFarePrediction();
   const [parsedTrip, setParsedTrip] = useState<ParsedTripDetails | null>(null);
   const [inputMode, setInputMode] = useState<'manual' | 'describe'>('manual');
 
@@ -15,6 +15,18 @@ function App() {
 
   function handleParsedTrip(trip: ParsedTripDetails) {
     setParsedTrip(trip);
+    // Switch to the manual view so the map (now pinned from the parsed coordinates), the
+    // populated form, and the result panel are all visible in one place.
+    setInputMode('manual');
+
+    if (trip.fare_amount !== undefined && trip.distance_km !== undefined) {
+      // /parse-trip already resolved both landmarks and ran the model server-side — show that
+      // prediction directly instead of firing a redundant /predict call for the same trip.
+      applyResult({ fare_amount: trip.fare_amount, distance_km: trip.distance_km });
+    }
+    // If fare_amount/distance_km are absent, the server couldn't resolve one or both landmarks
+    // (trip.warning explains which). The form/time/passenger fields still populate from what DID
+    // parse; the person places the remaining pin(s) manually and submits as usual.
   }
 
   function handleModeChange(mode: 'manual' | 'describe') {
