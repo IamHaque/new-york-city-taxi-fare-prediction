@@ -1,30 +1,30 @@
 [
   {
     "day": "Mon",
-    "rides": 256529
+    "rides": 2562675
   },
   {
     "day": "Tue",
-    "rides": 280509
+    "rides": 2801849
   },
   {
     "day": "Wed",
-    "rides": 288850
+    "rides": 2900696
   },
   {
     "day": "Thu",
-    "rides": 299799
+    "rides": 2996297
   },
   {
     "day": "Fri",
-    "rides": 308591
+    "rides": 3076381
   },
   {
     "day": "Sat",
-    "rides": 303165
+    "rides": 3038469
   },
   {
     "day": "Sun",
-    "rides": 262557
+    "rides": 2623633
   }
 ]

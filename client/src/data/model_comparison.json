@@ -1,19 +1,19 @@
 [
   {
     "model": "Hardcoded (mean)",
-    "rmse": 9.2793
+    "rmse": 9.2981
   },
   {
     "model": "Distance only",
-    "rmse": 4.0791
+    "rmse": 4.0889
   },
   {
     "model": "Linear Regression",
-    "rmse": 4.0747
+    "rmse": 4.0842
   },
   {
     "model": "Random Forest",
-    "rmse": 3.9231
+    "rmse": 3.9271
   },
   {
     "model": "XGBoost (production)",

@@ -1,7 +1,7 @@
 [
   {
     "month": "Jan",
-    "avgFare": 10.63
+    "avgFare": 10.66
   },
   {
     "month": "Feb",
@@ -13,11 +13,11 @@
   },
   {
     "month": "Apr",
-    "avgFare": 11.27
+    "avgFare": 11.25
   },
   {
     "month": "May",
-    "avgFare": 11.57
+    "avgFare": 11.54
   },
   {
     "month": "Jun",
@@ -25,26 +25,26 @@
   },
   {
     "month": "Jul",
-    "avgFare": 11.03
+    "avgFare": 11.04
   },
   {
     "month": "Aug",
-    "avgFare": 11.17
+    "avgFare": 11.16
   },
   {
     "month": "Sep",
-    "avgFare": 11.66
+    "avgFare": 11.68
   },
   {
     "month": "Oct",
-    "avgFare": 11.57
+    "avgFare": 11.58
   },
   {
     "month": "Nov",
-    "avgFare": 11.51
+    "avgFare": 11.49
   },
   {
     "month": "Dec",
-    "avgFare": 11.56
+    "avgFare": 11.53
   }
 ]

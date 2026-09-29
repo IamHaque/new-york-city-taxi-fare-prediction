@@ -3,70 +3,70 @@
     "label": "Rockefeller Center",
     "lat": 40.76,
     "lon": -73.98,
-    "rides": 115208,
+    "rides": 1150017,
     "avgFare": 10.26
   },
   {
     "label": "Rockefeller Center",
     "lat": 40.76,
     "lon": -73.97,
-    "rides": 114031,
-    "avgFare": 9.53
+    "rides": 1139248,
+    "avgFare": 9.54
   },
   {
     "label": "Madison Square Garden",
     "lat": 40.75,
     "lon": -73.99,
-    "rides": 106505,
-    "avgFare": 9.52
+    "rides": 1065424,
+    "avgFare": 9.53
   },
   {
     "label": "Grand Central",
     "lat": 40.75,
     "lon": -73.98,
-    "rides": 99404,
+    "rides": 995054,
     "avgFare": 9.38
   },
   {
     "label": "Union Square",
     "lat": 40.74,
     "lon": -73.99,
-    "rides": 78412,
-    "avgFare": 8.71
+    "rides": 787449,
+    "avgFare": 8.72
   },
   {
     "label": "Port Authority",
     "lat": 40.76,
     "lon": -73.99,
-    "rides": 75533,
+    "rides": 754423,
     "avgFare": 10.33
   },
   {
     "label": "Upper East Side",
     "lat": 40.77,
     "lon": -73.96,
-    "rides": 65697,
+    "rides": 654623,
     "avgFare": 8.57
   },
   {
     "label": "Union Square",
     "lat": 40.73,
     "lon": -73.99,
-    "rides": 59242,
-    "avgFare": 8.88
+    "rides": 595647,
+    "avgFare": 8.87
   },
   {
     "label": "40.77, -73.98",
     "lat": 40.77,
     "lon": -73.98,
-    "rides": 56710,
+    "rides": 564575,
     "avgFare": 9.46
   },
   {
     "label": "40.74, -73.98",
     "lat": 40.74,
     "lon": -73.98,
-    "rides": 55876,
-    "avgFare": 8.7
+    "rides": 558862,
+    "avgFare": 8.68
   }
 ]

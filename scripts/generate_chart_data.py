@@ -6,7 +6,7 @@ so every chart in the insights dashboard is backed by numbers that actually came
 notebooks/train.ipynb's analysis rather than numbers a UI pass invented.
 
 These files are CHECKED-IN GENERATED ARTIFACTS: they are regenerated on demand with
-`python -m scripts.generate_chart_data` (run from the repo root) followed by a normal
+`python -m generate_chart_data` (run from the repo root) followed by a normal
 `npm run build` in client/ — the React app never runs Python at build time, never fetches
 this data at runtime, and has no live Python dependency.
 
@@ -14,18 +14,18 @@ Each aggregate function's docstring names the exact pandas call in train.ipynb t
 mirrors, so a future notebook change and this script don't silently drift apart.
 
 Cleaning/feature logic is NOT reimplemented here: the sample goes through the exact same
-scripts.shared.data_utils.process_chunk pipeline the training scripts use, so chart numbers
+shared.data_utils.process_chunk pipeline the training scripts use, so chart numbers
 and model numbers are computed on the same cleaned data.
 """
 
 import json
 import os
 
-# Import order matters. scripts.shared.features bootstraps sys.path (adds scripts/shared/ and
-# scripts/ to it), which is what lets scripts.shared.data_utils's flat
+# Import order matters. shared.features bootstraps sys.path (adds scripts/shared/ and
+# scripts/ to it), which is what lets shared.data_utils's flat
 # (`from shared.features import ...`, `from config import ...`) imports resolve when this module
-# is executed as `python -m scripts.generate_chart_data` from the repo root.
-from scripts.shared.features import compute_features  # noqa: F401  (side-effect import)
+# is executed as `python -m generate_chart_data` from the repo root.
+from shared.features import compute_features  # noqa: F401  (side-effect import)
 
 import joblib
 import numpy as np
@@ -35,7 +35,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import root_mean_squared_error
 from sklearn.model_selection import train_test_split
 
-from scripts.config import (
+from config import (
     CHART_DATA_CHUNK_SIZE,
     CHART_DATA_SAMPLE_ROWS,
     DATA_PATH,
@@ -43,8 +43,8 @@ from scripts.config import (
     MODEL_SAVE_PATH_EXTREME,
     TRAIN_DTYPES,
 )
-from scripts.shared.data_utils import process_chunk
-from scripts.shared.landmarks import LANDMARK_COORDINATES
+from shared.data_utils import process_chunk
+from shared.landmarks import LANDMARK_COORDINATES
 
 OUTPUT_DIR = os.path.join('client', 'src', 'data')
 

@@ -1,98 +1,98 @@
 [
   {
     "hour": 0,
-    "rides": 78799
+    "rides": 792387
   },
   {
     "hour": 1,
-    "rides": 58296
+    "rides": 584903
   },
   {
     "hour": 2,
-    "rides": 43479
+    "rides": 436107
   },
   {
     "hour": 3,
-    "rides": 32103
+    "rides": 319551
   },
   {
     "hour": 4,
-    "rides": 23369
+    "rides": 230204
   },
   {
     "hour": 5,
-    "rides": 19371
+    "rides": 192998
   },
   {
     "hour": 6,
-    "rides": 41083
+    "rides": 410428
   },
   {
     "hour": 7,
-    "rides": 72023
+    "rides": 720831
   },
   {
     "hour": 8,
-    "rides": 90790
+    "rides": 907562
   },
   {
     "hour": 9,
-    "rides": 93562
+    "rides": 935099
   },
   {
     "hour": 10,
-    "rides": 90472
+    "rides": 902694
   },
   {
     "hour": 11,
-    "rides": 93292
+    "rides": 932006
   },
   {
     "hour": 12,
-    "rides": 98315
+    "rides": 982721
   },
   {
     "hour": 13,
-    "rides": 98238
+    "rides": 978664
   },
   {
     "hour": 14,
-    "rides": 101242
+    "rides": 1008215
   },
   {
     "hour": 15,
-    "rides": 96158
+    "rides": 961103
   },
   {
     "hour": 16,
-    "rides": 82299
+    "rides": 823151
   },
   {
     "hour": 17,
-    "rides": 98303
+    "rides": 989552
   },
   {
     "hour": 18,
-    "rides": 120597
+    "rides": 1206426
   },
   {
     "hour": 19,
-    "rides": 125133
+    "rides": 1253253
   },
   {
     "hour": 20,
-    "rides": 117638
+    "rides": 1178068
   },
   {
     "hour": 21,
-    "rides": 114981
+    "rides": 1147457
   },
   {
     "hour": 22,
-    "rides": 111494
+    "rides": 1115601
   },
   {
     "hour": 23,
-    "rides": 98963
+    "rides": 991019
   }
 ]
