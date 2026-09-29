@@ -15,6 +15,7 @@ import { useTheme } from '@/context/ThemeProvider';
 import { NYC_LAT_MAX, NYC_LAT_MIN, NYC_LON_MAX, NYC_LON_MIN } from '@/utils/validators';
 import { haversineMiles, type Coordinate } from '@/utils/geo';
 import { dropoffIcon, pickupIcon } from './Mapicons';
+import { twMerge } from 'tailwind-merge';
 
 export type { Coordinate } from '@/utils/geo';
 
@@ -137,10 +138,30 @@ export function TripMap({
   const hasPin = pickup !== null || dropoff !== null;
   const routeMiles = pickup && dropoff ? haversineMiles(pickup, dropoff) : null;
 
-  const switchButtonClass = (isActive: boolean) =>
-    isActive
-      ? 'border-primary bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground'
-      : 'border-border bg-transparent text-muted-foreground hover:border-primary hover:bg-background hover:text-foreground';
+  const switchButtonClass = (
+    isActive: boolean,
+    type: 'success' | 'danger',
+  ) => {
+    const colors = {
+      success: {
+        active:
+          'border-green-600 bg-green-600 text-white hover:border-green-700 hover:bg-green-700 hover:text-white',
+        inactive:
+          'border-green-600 bg-transparent text-green-600 hover:border-green-600 hover:bg-green-50 hover:text-green-700',
+      },
+      danger: {
+        active:
+          'border-red-600 bg-red-600 text-white hover:border-red-700 hover:bg-red-700 hover:text-white',
+        inactive:
+          'border-red-600 bg-transparent text-red-600 hover:border-red-600 hover:bg-red-50 hover:text-red-700',
+      },
+    };
+
+    return twMerge(
+      'transition-colors',
+      isActive ? colors[type].active : colors[type].inactive,
+    );
+  };
 
   return (
     <div className="relative h-[420px] overflow-hidden rounded-md border border-border lg:sticky lg:top-[5.5rem] lg:h-[calc(100vh-8rem)] lg:min-h-[560px]">
@@ -202,22 +223,23 @@ export function TripMap({
       </MapContainer>
 
       {/* Floating pickup/dropoff switch — overlays the map instead of sitting above it */}
-      <div className="bg-card/90 absolute left-3 top-3 z-[1000] flex gap-1 rounded-lg border border-border p-1 shadow-md backdrop-blur">
+      <div className="bg-card/90 absolute right-3 top-3 z-[1000] flex gap-1 rounded-lg border border-border p-1 shadow-md backdrop-blur">
         <Button
           type="button"
           variant="outline"
           size="sm"
-          className={switchButtonClass(activePin === 'pickup')}
+          className={switchButtonClass(activePin === 'pickup', 'success')}
           onClick={() => onActivePinChange('pickup')}
           disabled={disabled}
         >
           Set Pickup
         </Button>
+
         <Button
           type="button"
           variant="outline"
           size="sm"
-          className={switchButtonClass(activePin === 'dropoff')}
+          className={switchButtonClass(activePin === 'dropoff', 'danger')}
           onClick={() => onActivePinChange('dropoff')}
           disabled={disabled}
         >
@@ -227,10 +249,10 @@ export function TripMap({
 
       {/* Clear pins — same floating-pill treatment, only shown once there's something to clear */}
       {hasPin && (
-        <div className="bg-card/90 absolute right-3 top-3 z-[1000] rounded-lg border border-border p-1 shadow-md backdrop-blur">
+        <div className="bg-card/90 absolute right-3 top-[4rem] z-[1000] rounded-lg border border-border p-1 shadow-md backdrop-blur">
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={handleClearPins}
             disabled={disabled}
