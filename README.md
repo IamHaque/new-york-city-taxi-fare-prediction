@@ -5,8 +5,7 @@ coordinates, time, and passenger count — served through a Flask API and a Reac
 place pins on a map, or just describe a trip in plain English and have a local LLM fill in the form.
 
 Built against Kaggle's [New York City Taxi Fare Prediction](https://www.kaggle.com/competitions/new-york-city-taxi-fare-prediction)
-competition (55.4M labeled trips), as the case-study project for RTB C16 — AI & ML (see
-[`docs/RTB-C16-AI-ML.md`](docs/RTB-C16-AI-ML.md)).
+competition (55.4M labeled trips), as the case-study project for RTB C16 — AI & ML.
 
 ---
 
@@ -96,8 +95,7 @@ and a fare computed from a parsed sentence are never silently different.
 ├── notebooks/
 │   ├── train.ipynb          The original EDA + model-comparison notebook
 │   ├── test.ipynb / sanity.ipynb
-├── trained-models/          Saved model + metadata .pkl files (see ⚠️ Known Issues below)
-└── docs/                    PRDs, case-study plan, and this project's process history
+├── trained-models/          Saved model + metadata .pkl files
 ```
 
 ---
@@ -126,20 +124,20 @@ python app.py
 # Flask now listens on http://0.0.0.0:5000
 ```
 
-> ⚠️ **Before running this**, read [Known Issues #1](#known-issues) below — in the current state of
-> the repo, `server/app.py` will fail to start with a `FileNotFoundError`. It's a one-line config fix
-> or a training run away; see the linked PRD for the exact options.
-
 ### 2. Client
 
 ```bash
 cd client
+cp .env.example .env   # then paste your CARTO key — see Known Issues below
 npm install
 npm run dev
 # Vite dev server, default http://localhost:5173
 ```
 
 The client expects the API at `http://localhost:5000` (see `client/src/api/fareApi.ts`).
+`client/.env` (gitignored) carries `VITE_API_BASE_URL` and `VITE_CARTO_KEY` — the latter is
+required for dark-theme map tiles (CARTO watermarks keyless requests; free keys at
+[carto.com/basemaps/apikey](https://carto.com/basemaps/apikey)).
 
 ### 3. (Optional) Regenerate the insights dashboard's data
 
@@ -211,9 +209,10 @@ endpoint.
   "pickup_landmark": "times square",
   "dropoff_landmark": "jfk airport",
   "hour": 18,
-  "day_of_week_num": 4,
-  "month": 9,
+  "day_of_week_num": 4, // Friday — extracted from the text
+  "month": 9,           // not stated -> filled server-side with the current date
   "year": 2026,
+  "assumed_time_fields": ["month", "year"], // ...and disclosed here so the UI can say so
   "passenger_count": 2,
   "pickup_resolved": true,
   "dropoff_resolved": true,
@@ -229,12 +228,13 @@ endpoint.
 ```jsonc
 // Response — one landmark not recognized: still 200, no fare, a warning instead
 {
-  "pickup_landmark": "my apartment",
+  "pickup_landmark": null, // not in the canonical list -> null, never a guessed name
   "dropoff_landmark": "jfk airport",
   "hour": 18,
   "day_of_week_num": 4,
   "month": 9,
   "year": 2026,
+  "assumed_time_fields": ["month", "year"],
   "passenger_count": 1,
   "pickup_resolved": false,
   "dropoff_resolved": true,
@@ -244,9 +244,19 @@ endpoint.
 }
 ```
 
-The LLM only ever extracts landmark **names** — `scripts/shared/landmarks.py` (server) and
-`client/src/utils/landmarks.ts` (client fallback) are the two places that know real coordinates.
-Widening trip-description coverage means adding entries there, not touching the LLM prompt.
+The LLM only ever extracts what the description **literally states** — anything else comes back
+as `null` (never a fabricated `0` or a guessed landmark name), under a strict prompt in
+`scripts/config.py` with JSON-grammar decoding and `temperature: 0`. The server then completes
+the time fields (`server/app.py::resolve_time_fields`) with precedence **explicit text >
+relative day (`today`/`tomorrow`, resolved against the real clock) > now**, and reports every
+field it filled with now in `assumed_time_fields` so the client can disclose it instead of
+silently showing a made-up time. Vague dayparts map to fixed hours (morning→8, afternoon→14,
+evening→19, night/late night→22).
+
+Landmark **names** resolve through `scripts/shared/landmarks.py` (server) and
+`client/src/utils/landmarks.ts` (client fallback) — the two places that know real coordinates.
+Widening trip-description coverage means adding entries there; the prompt embeds that same list
+so the model can only ever copy names the resolver recognizes.
 
 ---
 
@@ -262,50 +272,31 @@ Widening trip-description coverage means adding entries there, not touching the 
   `scripts/shared/features.py`.
 - **Data cleaning** (`scripts/shared/data_utils.py::process_chunk`): fares $2.50–$300, 1–6
   passengers, both points inside a fixed NYC lat/lon box, trip distance 0.1–85 km.
-- **Reported validation RMSE:** ~$3.55 (`trained-models/model_metadata.pkl`) — against Kaggle's own
-  stated "$5–8 with distance alone" reference point for this competition.
+- **Reported validation RMSE:** ~$2.84 (`trained-models/model_metadata_extreme.pkl`,
+  `model_type: xgboost_gpu_extreme_log`) — the model `server/app.py` actually loads
+  (`MODEL_SAVE_PATH_EXTREME`) — against Kaggle's own stated "$5–8 with distance alone" reference
+  point for this competition.
 - **Model comparison** (hardcoded-mean baseline → distance-only linear regression → 5-feature linear
   regression → random forest → the production XGBoost model) is computed fresh, on the same cleaned
   sample, every time `scripts/generate_chart_data.py::model_comparison()` runs — see the Insights tab
   in the client, or `client/src/data/model_comparison.json`.
 
-For the full reasoning behind these choices — including sample viva-style Q&A — see
-[`docs/Phase1_Viva_Prep_Guide.md`](docs/Phase1_Viva_Prep_Guide.md).
-
 ---
 
 ## ⚠️ Known Issues
 
-A full review (build/lint output, a manual code read-through, and checking every model path
-`server/app.py` and `scripts/generate_chart_data.py` reference against what's actually committed in
-`trained-models/`) turned up one blocking issue and several smaller ones. Full detail, evidence, and
-proposed fixes: [`docs/Taxi_Fare_UI_PRD_v5_Fixes_and_Enhancements.md`](docs/Taxi_Fare_UI_PRD_v5_Fixes_and_Enhancements.md).
+1. **CARTO key hygiene (PRD v5, Issue 3).** A CARTO Basemaps API key from an earlier commit is
+   still visible in git history. The live source now reads `VITE_CARTO_KEY` from the gitignored
+   `client/.env` instead of hardcoding it, but the historical key should be treated as
+   compromised — rotate it at [carto.com/basemaps/apikey](https://carto.com/basemaps/apikey) and
+   update your local `.env`. (Keyless CARTO requests still return tiles, watermarked.)
 
-1. **The server won't start.** `server/app.py` and `scripts/generate_chart_data.py` both load
-   `trained-models/fare_model_extreme.pkl` / `model_metadata_extreme.pkl` — neither file exists in
-   the repo. `train_extreme.py` appears to have never actually been run (or its output was never
-   committed). This is a `FileNotFoundError` at import time, not a runtime edge case — read the PRD
-   before trying to run the server.
-2. A handful of UI/UX and consistency issues (a dark-theme map using a light basemap style, a
-   committed-in-plaintext API key, a color mismatch between the map's pin icons and its floating
-   controls, and no keyboard/screen-reader-accessible way to set a location now that manual lat/lon
-   fields have been replaced by map-only pin placement) — see the same PRD for all of them, prioritized.
-
----
-
-## Documentation index
-
-| Doc                                                                                                            | What it's for                                                                          |
-| -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| [`docs/RTB-C16-AI-ML.md`](docs/RTB-C16-AI-ML.md)                                                               | The original case-study brief this project answers                                     |
-| [`docs/NYC_Taxi_Fare_CaseStudy_Plan.md`](docs/NYC_Taxi_Fare_CaseStudy_Plan.md)                                 | Early planning notes for the case study                                                |
-| [`docs/Phase1_Viva_Prep_Guide.md`](docs/Phase1_Viva_Prep_Guide.md)                                             | Milestone-by-milestone viva prep: concepts, this repo's actual code, sample Q&A        |
-| [`docs/Phase2_CaseStudy_Demo_Guide.md`](docs/Phase2_CaseStudy_Demo_Guide.md)                                   | Demo script + anticipated evaluator questions for the live showcase                    |
-| [`docs/Taxi_Fare_UI_PRD_v4_ReferenceMockupAlignment.md`](docs/Taxi_Fare_UI_PRD_v4_ReferenceMockupAlignment.md) | The PRD that took the client from a single stacked form to the current map-hero layout |
-| [`docs/Taxi_Fare_UI_PRD_v5_Fixes_and_Enhancements.md`](docs/Taxi_Fare_UI_PRD_v5_Fixes_and_Enhancements.md)     | Post-implementation review: bugs found, prioritized, with fix plans                    |
-
-Older PRDs (`v1`–`v3`) are kept for history; `v4` describes the design the client was actually built
-against and is the one worth reading if you want to understand _why_ a component looks the way it does.
+2. **OpenStreetMap tile policy (PRD v5, Issue 10).** The light-theme basemap hits
+   `tile.openstreetmap.org` directly, which
+   [OSM's usage policy](https://operations.osmfoundation.org/policies/tiles/) allows only for
+   light, non-production traffic — fine for this local case-study demo. If this project were ever
+   deployed publicly, both light and dark tiles should move to a provider plan meant for
+   production traffic (e.g. a properly-keyed CARTO or Mapbox plan).
 
 ---
 
