@@ -85,7 +85,7 @@ export function InsightsSection({ chartContext }: InsightsSectionProps) {
  * Story 7.6 — honest placeholder instead of fabricated density data: dashed card awaiting a
  * binned heat-map grid export from scripts/generate_chart_data.py.
  */
-function HeatmapPlaceholder() {
+export function HeatmapPlaceholder() {
   return (
     <Card className="flex min-h-[240px] flex-col items-center justify-center rounded-lg border border-dashed text-center">
       <CardHeader className="items-center pb-2">

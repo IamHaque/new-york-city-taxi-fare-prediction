@@ -137,6 +137,27 @@ const TIME_FIELD_LABELS: Record<string, string> = {
 };
 
 /**
+ * Session-history ceiling for recent estimates — the card shows the first few inline and the
+ * rest behind "See more", but never stores more than this (list is session-only, newest first).
+ */
+const MAX_RECENT_ESTIMATES = 50;
+
+/** Two estimates are "the same trip" when every model input matches (labels/fare/time may differ). */
+function tripsEqual(a: TripInput, b: TripInput): boolean {
+  return (
+    a.pickup_lat === b.pickup_lat &&
+    a.pickup_lon === b.pickup_lon &&
+    a.dropoff_lat === b.dropoff_lat &&
+    a.dropoff_lon === b.dropoff_lon &&
+    a.hour === b.hour &&
+    a.day_of_week_num === b.day_of_week_num &&
+    a.month === b.month &&
+    a.year === b.year &&
+    a.passenger_count === b.passenger_count
+  );
+}
+
+/**
  * TripPlanner - the app's two-column, map-as-hero shell (PRD v4, Epic 2).
  *
  * Owns every piece of state the old TripDetails.tsx held (form values/errors/touched,
@@ -280,7 +301,15 @@ export function TripPlanner({ onChartContextChange }: TripPlannerProps) {
       submittedAt: Date.now(),
       trip,
     };
-    setRecentEstimates((prev) => [item, ...prev].slice(0, 5));
+    // Upsert by payload: re-estimating the same trip (Predict Fare twice, re-parsing the same
+    // description, clicking an existing recent row, drag back to a previous spot, retry)
+    // refreshes that entry — fresh fare/time — and moves it to the top instead of duplicating.
+    setRecentEstimates((prev) =>
+      [item, ...prev.filter((existing) => !tripsEqual(existing.trip, trip))].slice(
+        0,
+        MAX_RECENT_ESTIMATES
+      )
+    );
   }
 
   function handleSelectRecent(item: RecentEstimate) {
