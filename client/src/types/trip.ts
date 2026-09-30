@@ -25,7 +25,7 @@ export interface PredictionResult {
 /**
  * ParsedTripDetails - the shape of data returned from the Flask /parse-trip endpoint.
  *
- * The server now resolves each landmark name to coordinates itself (scripts/shared/landmarks.py)
+ * The server resolves each landmark name to coordinates itself (scripts/shared/landmarks.py)
  * and, when BOTH sides resolve, runs the same model inference /predict uses and includes
  * fare_amount/distance_km directly in this response. pickup_lat/pickup_lon/dropoff_lat/
  * dropoff_lon are therefore normally server-provided; enrichParsedTripWithCoordinates() in
@@ -35,15 +35,22 @@ export interface PredictionResult {
  * all. When either is false, fare_amount/distance_km are absent and `warning` explains why —
  * the parsed time/passenger fields are still usable to pre-fill the form even when a location
  * couldn't be resolved.
+ *
+ * Time fields are `number | null`: the LLM only echoes values the description literally states
+ * (null otherwise), the server completes them with the current date/time, and every field it
+ * filled in that way is listed in assumed_time_fields so the UI can disclose the assumption
+ * instead of silently showing a fabricated time. A response is therefore always either valid
+ * values or null — never an out-of-range placeholder like 0.
  */
 export interface ParsedTripDetails {
-  pickup_landmark: string;
-  dropoff_landmark: string;
-  hour: number;
-  day_of_week_num: number;
-  month: number;
-  year: number;
-  passenger_count: number;
+  pickup_landmark: string | null;
+  dropoff_landmark: string | null;
+  hour: number | null;
+  day_of_week_num: number | null;
+  month: number | null;
+  year: number | null;
+  passenger_count: number | null;
+  assumed_time_fields?: string[];
   pickup_lat?: number;
   pickup_lon?: number;
   dropoff_lat?: number;

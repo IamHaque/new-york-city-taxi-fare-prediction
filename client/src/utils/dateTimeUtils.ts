@@ -23,3 +23,28 @@ export function decomposeDateTime(
 
   return { hour, day_of_week_num, month, year };
 }
+
+/**
+ * Inverse of decomposeDateTime: builds a datetime-local string FROM the four numeric fields,
+ * i.e. the first `dayOfWeekNum` weekday of `month`/`year` at `hour`:00.
+ *
+ * Uses local-time getters/formatting (NOT Date#toISOString) so that
+ * decomposeDateTime(composeDateTime(...)) always round-trips to the same four numbers in any
+ * timezone — the datetime input can therefore never disagree with the fields it was built from.
+ *
+ * Example: (2026, 1, 2, 14) -> "2026-01-07T14:00" (a Wednesday, Mon=0 ... Sun=6)
+ */
+export function composeDateTime(
+  year: number,
+  month: number,
+  dayOfWeekNum: number,
+  hour: number
+): string {
+  const date = new Date(year, month - 1, 1, hour, 0, 0, 0);
+  const targetJsDay = (dayOfWeekNum + 1) % 7;
+  const offset = (targetJsDay - date.getDay() + 7) % 7;
+  date.setDate(date.getDate() + offset);
+
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:00`;
+}

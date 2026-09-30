@@ -120,7 +120,7 @@ export function FareResultCard({ result, isLoading, error, trip, onRetry }: Fare
           </p>
         </div>
 
-        {breakdown.length > 0 && (
+        {breakdown.length > 0 && false && (
           <div className="space-y-2">
             <p className="text-xs font-medium uppercase text-muted-foreground">Fare breakdown</p>
             <div className="flex h-3 w-full overflow-hidden rounded-full bg-muted">
@@ -159,7 +159,7 @@ export function FareResultCard({ result, isLoading, error, trip, onRetry }: Fare
           <div className="grid grid-cols-4 divide-x divide-border rounded-lg border border-border">
             <div className="flex flex-col items-center gap-0.5 px-1 py-2">
               <span className="font-mono text-sm font-semibold text-foreground">
-                {stats.distanceMiles.toFixed(1)} mi
+                {stats.distanceMiles.toFixed(1)} km
               </span>
               <span className="text-center text-[10px] leading-tight text-muted-foreground">
                 Distance

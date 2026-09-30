@@ -7,9 +7,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ErrorBanner } from '@/components/shared/ErrorBanner';
 import { NoticeBanner } from '@/components/shared/NoticeBanner';
 import { PassengerStepper } from '@/components/shared/PassengerStepper';
-import { Clock, Loader2, MapPin, MessageSquare, Users } from 'lucide-react';
+import { ChevronDown, Clock, Loader2, MapPin, MessageSquare, Users } from 'lucide-react';
 import type { TripInput } from '@/types/trip';
-import type { ValidationErrors } from '@/utils/validators';
+import {
+  NYC_LAT_MAX,
+  NYC_LAT_MIN,
+  NYC_LON_MAX,
+  NYC_LON_MIN,
+  type ValidationErrors,
+} from '@/utils/validators';
 import type { ActivePin } from '@/components/TripMap/TripMap';
 import { cn } from '@/lib/utils';
 
@@ -67,9 +73,10 @@ const QUICK_JUMP_LANDMARKS = [
 ] as const;
 
 const DESCRIPTION_SUGGESTIONS = [
-  '2 people from Times Square to JFK Friday at 6pm',
-  'From La Guardia to Wall Street at 8am',
-  'Late night ride from Central Park to Brooklyn Bridge',
+  '2 people from Times Square to JFK Airport Friday at 6pm',
+  '3 people from Grand Central to Rockefeller Center in the morning',
+  'Evening ride from Wall Street to Times Square on Sunday',
+  'From Penn Station to La Guardia Airport tomorrow at 7am',
 ];
 
 function formatCoord(value: number | ''): string {
@@ -78,82 +85,185 @@ function formatCoord(value: number | ''): string {
 
 interface LocationRowProps {
   label: string;
+  /** Drives the manual-entry field names (pickup_lat/pickup_lon vs dropoff_*). */
+  side: 'pickup' | 'dropoff';
   iconClass: string;
   address: AddressState;
   lat: number | '';
   lon: number | '';
   error?: string;
+  lonError?: string;
   isActive: boolean;
   disabled?: boolean;
   onSelect: () => void;
   onRetry: () => void;
+  onCoordChange: <K extends keyof FormState>(field: K, value: FormState[K]) => void;
+  onCoordBlur: (field: keyof TripInput | 'datetime') => void;
 }
 
 /**
  * Compact pickup/drop-off row (PRD v4, Story 4.1 #3): reverse-geocoded name when available,
  * coordinates as the secondary line. Clicking the row selects the same active pin the map's
  * floating switch uses, so rail and map stay in sync.
+ *
+ * Also hosts the PRD v5 Story 2.4 accessibility fallback: a collapsed-by-default
+ * "Enter coordinates manually" disclosure with lat/lon number inputs, so a keyboard-only or
+ * screen-reader user can set a location without ever touching the Leaflet map.
  */
 function LocationRow({
   label,
+  side,
   iconClass,
   address,
   lat,
   lon,
   error,
+  lonError,
   isActive,
   disabled,
   onSelect,
   onRetry,
+  onCoordChange,
+  onCoordBlur,
 }: LocationRowProps) {
+  const [manualOpen, setManualOpen] = useState(false);
+
+  const latField = side === 'pickup' ? 'pickup_lat' : 'dropoff_lat';
+  const lonField = side === 'pickup' ? 'pickup_lon' : 'dropoff_lon';
+  const latInputId = `${side}-manual-lat`;
+  const lonInputId = `${side}-manual-lon`;
+  const panelId = `${side}-manual-entry`;
+
   const primaryLine = address.loading
     ? 'Loading address…'
     : address.error
       ? 'Address unavailable'
       : address.value || 'Not set yet';
 
+  const rowError = error || lonError;
+
   return (
     <div
       className={cn(
-        'flex items-start gap-2 rounded-md border px-3 py-2 transition-colors hover:border-primary',
+        'rounded-md border transition-colors hover:border-primary',
         isActive && 'bg-primary/5 border-primary'
       )}
     >
-      <MapPin className={cn('mt-1 h-4 w-4 shrink-0', iconClass)} />
-      <button
-        type="button"
-        className="min-w-0 flex-1 text-left disabled:cursor-not-allowed"
-        onClick={!disabled ? onSelect : undefined}
-        disabled={disabled}
-        aria-pressed={isActive}
-      >
-        <span className="flex items-center gap-2">
-          <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            {label}
-          </span>
-          {isActive && <span className="text-[10px] text-primary">placing on map</span>}
-        </span>
-        <span className="block truncate text-sm text-foreground">{primaryLine}</span>
-        <span className="block truncate font-mono text-[11px] text-muted-foreground">
-          {formatCoord(lat)}, {formatCoord(lon)}
-        </span>
-        {error && (
-          <span role="alert" className="mt-0.5 block text-xs text-destructive">
-            {error}
-          </span>
-        )}
-      </button>
-      {address.error && !address.loading && (
-        <Button
+      <div className="flex items-start gap-2 px-3 py-2">
+        <MapPin className={cn('mt-1 h-4 w-4 shrink-0', iconClass)} />
+        <button
           type="button"
-          variant="ghost"
-          size="sm"
-          className="mt-1 h-6 px-2 text-xs"
-          onClick={onRetry}
+          className="min-w-0 flex-1 text-left disabled:cursor-not-allowed"
+          onClick={!disabled ? onSelect : undefined}
+          disabled={disabled}
+          aria-pressed={isActive}
         >
-          Retry
-        </Button>
-      )}
+          <span className="flex items-center gap-2">
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              {label}
+            </span>
+            {isActive && <span className="text-[10px] text-primary">placing on map</span>}
+          </span>
+          <span className="block truncate text-sm text-foreground">{primaryLine}</span>
+          <span className="block truncate font-mono text-[11px] text-muted-foreground">
+            {formatCoord(lat)}, {formatCoord(lon)}
+          </span>
+          {!manualOpen && rowError && (
+            <span role="alert" className="mt-0.5 block text-xs text-destructive">
+              {rowError}
+            </span>
+          )}
+        </button>
+        {address.error && !address.loading && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="mt-1 h-6 px-2 text-xs"
+            onClick={onRetry}
+          >
+            Retry
+          </Button>
+        )}
+      </div>
+
+      {/* Accessible manual-entry fallback (PRD v5, Story 2.4) */}
+      <div className="border-border/60 border-t px-3 py-1.5">
+        <button
+          type="button"
+          className="flex w-full items-center gap-1.5 py-0.5 text-[11px] font-medium text-muted-foreground transition-colors hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
+          aria-expanded={manualOpen}
+          aria-controls={panelId}
+          disabled={disabled}
+          onClick={() => setManualOpen((open) => !open)}
+        >
+          <ChevronDown
+            className={cn('h-3.5 w-3.5 transition-transform', manualOpen && 'rotate-180')}
+            aria-hidden="true"
+          />
+          Enter coordinates manually
+        </button>
+
+        {manualOpen && (
+          <div id={panelId} className="grid grid-cols-2 gap-2 pb-1.5 pt-1">
+            <div className="space-y-1">
+              <Label htmlFor={latInputId} className="text-xs">
+                Latitude
+              </Label>
+              <Input
+                id={latInputId}
+                type="number"
+                step="any"
+                min={NYC_LAT_MIN}
+                max={NYC_LAT_MAX}
+                inputMode="decimal"
+                placeholder="40.7580"
+                value={lat === '' ? '' : lat}
+                onChange={(e) =>
+                  onCoordChange(latField, e.target.value === '' ? '' : Number(e.target.value))
+                }
+                onBlur={() => onCoordBlur(latField)}
+                disabled={disabled}
+                aria-invalid={Boolean(error)}
+              />
+              {error && (
+                <p role="alert" className="text-xs text-destructive">
+                  {error}
+                </p>
+              )}
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor={lonInputId} className="text-xs">
+                Longitude
+              </Label>
+              <Input
+                id={lonInputId}
+                type="number"
+                step="any"
+                min={NYC_LON_MIN}
+                max={NYC_LON_MAX}
+                inputMode="decimal"
+                placeholder="-73.9855"
+                value={lon === '' ? '' : lon}
+                onChange={(e) =>
+                  onCoordChange(lonField, e.target.value === '' ? '' : Number(e.target.value))
+                }
+                onBlur={() => onCoordBlur(lonField)}
+                disabled={disabled}
+                aria-invalid={Boolean(lonError)}
+              />
+              {lonError && (
+                <p role="alert" className="text-xs text-destructive">
+                  {lonError}
+                </p>
+              )}
+            </div>
+            <p className="col-span-2 font-mono text-[10.5px] text-muted-foreground">
+              NYC bounds: lat {NYC_LAT_MIN}–{NYC_LAT_MAX}, lon {NYC_LON_MIN}–{NYC_LON_MAX}
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -266,27 +376,35 @@ export function TripInputCard({
           <Label>Pickup &amp; drop-off</Label>
           <LocationRow
             label="Pickup"
+            side="pickup"
             iconClass="text-pickup"
             address={pickupAddress}
             lat={values.pickup_lat}
             lon={values.pickup_lon}
-            error={errors.pickup_lat || errors.pickup_lon}
+            error={errors.pickup_lat}
+            lonError={errors.pickup_lon}
             isActive={activePin === 'pickup'}
             disabled={disabled}
             onSelect={() => onActivePinChange('pickup')}
             onRetry={() => onRetryAddress('pickup')}
+            onCoordChange={onChange}
+            onCoordBlur={onBlur}
           />
           <LocationRow
             label="Drop-off"
+            side="dropoff"
             iconClass="text-dropoff"
             address={dropoffAddress}
             lat={values.dropoff_lat}
             lon={values.dropoff_lon}
-            error={errors.dropoff_lat || errors.dropoff_lon}
+            error={errors.dropoff_lat}
+            lonError={errors.dropoff_lon}
             isActive={activePin === 'dropoff'}
             disabled={disabled}
             onSelect={() => onActivePinChange('dropoff')}
             onRetry={() => onRetryAddress('dropoff')}
+            onCoordChange={onChange}
+            onCoordBlur={onBlur}
           />
         </div>
 

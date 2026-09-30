@@ -47,9 +47,11 @@ function normalizeLandmark(name: string): string {
 
 /**
  * Attempts to resolve a landmark name to coordinates.
- * Returns tuple [lat, lon] or null if not found.
+ * Returns tuple [lat, lon] or null if not found (or if the name is null — /parse-trip returns
+ * null for landmark names it couldn't extract, and an unresolved side is not an error here).
  */
-export function resolveLandmark(name: string): [number, number] | null {
+export function resolveLandmark(name: string | null | undefined): [number, number] | null {
+  if (!name) return null;
   const normalized = normalizeLandmark(name);
   return LANDMARK_COORDINATES[normalized] ?? null;
 }

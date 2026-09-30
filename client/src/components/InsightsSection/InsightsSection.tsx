@@ -66,7 +66,7 @@ export function InsightsSection({ chartContext }: InsightsSectionProps) {
         {activeGroup === 'locations' && (
           <>
             <TopDropoffsChart />
-            <HeatmapPlaceholder />
+            {/* <HeatmapPlaceholder /> */}
           </>
         )}
 

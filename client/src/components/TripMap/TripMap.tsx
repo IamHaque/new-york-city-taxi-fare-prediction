@@ -25,13 +25,19 @@ interface TripMapProps {
   pickup: Coordinate | null;
   dropoff: Coordinate | null;
   /**
-   * Widened from `(coord: Coordinate) => void` to allow null so a "Clear pins" action can
-   * reset both sides through the same callback (PRD v4, Story 3.3).
+   * Reports a pin placement/change for the given side. `null` clears that one side.
+   * "Clear pins" does NOT go through these anymore (see onClearPins below).
    * `reestimate` is true only for marker drags — TripPlanner re-runs the fare estimate then,
    * while a plain map click just places the pin (Story 4.3).
    */
   onPickupChange: (coord: Coordinate | null, reestimate?: boolean) => void;
   onDropoffChange: (coord: Coordinate | null, reestimate?: boolean) => void;
+  /**
+   * Clears BOTH pins in one state update. Routing "Clear pins" through the two per-side
+   * callbacks instead used to leave the pickup behind: both handlers closed over the same
+   * `values`, so the second setValues clobbered the first and only the dropoff cleared.
+   */
+  onClearPins: () => void;
   activePin: ActivePin;
   onActivePinChange: (pin: ActivePin) => void;
   disabled?: boolean;
@@ -100,6 +106,7 @@ export function TripMap({
   dropoff,
   onPickupChange,
   onDropoffChange,
+  onClearPins,
   activePin,
   onActivePinChange,
   disabled,
@@ -122,13 +129,19 @@ export function TripMap({
 
   function handleClearPins() {
     if (disabled) return;
-    onPickupChange(null);
-    onDropoffChange(null);
+    onClearPins();
   }
 
+  // CARTO's basemap terms (Sept 2026) require an API key on every basemaps.cartocdn.com
+  // request - keyless tiles come back watermarked — so the key is sourced from the env
+  // (client/.env, gitignored) rather than hardcoded.
+  const cartoKey = import.meta.env.VITE_CARTO_KEY as string | undefined;
+  const darkTileBase = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
   const tileUrl =
     theme === 'dark'
-      ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=cb1_40hw_1_a2904f9235369bdd56f8c34e'
+      ? cartoKey
+        ? `${darkTileBase}?key=${cartoKey}`
+        : darkTileBase
       : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
   const tileAttribution =
     theme === 'dark'
@@ -138,33 +151,25 @@ export function TripMap({
   const hasPin = pickup !== null || dropoff !== null;
   const routeMiles = pickup && dropoff ? haversineMiles(pickup, dropoff) : null;
 
-  const switchButtonClass = (
-    isActive: boolean,
-    type: 'success' | 'danger',
-  ) => {
+  // Same design tokens as the pins themselves (var(--pickup)/var(--dropoff)), so the switch
+  // and the marker it controls are always the exact same hue in both themes (PRD v5, Issue 4).
+  const switchButtonClass = (isActive: boolean, type: ActivePin) => {
     const colors = {
-      success: {
-        active:
-          'border-green-600 bg-green-600 text-white hover:border-green-700 hover:bg-green-700 hover:text-white',
-        inactive:
-          'border-green-600 bg-transparent text-green-600 hover:border-green-600 hover:bg-green-50 hover:text-green-700',
+      pickup: {
+        active: 'border-pickup bg-pickup text-[var(--pickup-foreground)] hover:opacity-85',
+        inactive: 'border-pickup bg-transparent text-pickup hover:opacity-75',
       },
-      danger: {
-        active:
-          'border-red-600 bg-red-600 text-white hover:border-red-700 hover:bg-red-700 hover:text-white',
-        inactive:
-          'border-red-600 bg-transparent text-red-600 hover:border-red-600 hover:bg-red-50 hover:text-red-700',
+      dropoff: {
+        active: 'border-dropoff bg-dropoff text-[var(--dropoff-foreground)] hover:opacity-85',
+        inactive: 'border-dropoff bg-transparent text-dropoff hover:opacity-75',
       },
     };
 
-    return twMerge(
-      'transition-colors',
-      isActive ? colors[type].active : colors[type].inactive,
-    );
+    return twMerge('transition', isActive ? colors[type].active : colors[type].inactive);
   };
 
   return (
-    <div className="relative h-[420px] overflow-hidden rounded-md border border-border lg:sticky lg:top-[5.5rem] lg:h-[calc(100vh-8rem)] lg:min-h-[560px]">
+    <div className="relative h-[420px] overflow-hidden rounded-md border border-border lg:sticky lg:top-[7.5rem] lg:h-[calc(100vh-9rem)] lg:min-h-[560px]">
       <MapContainer
         center={DEFAULT_CENTER}
         zoom={DEFAULT_ZOOM}
@@ -216,21 +221,24 @@ export function TripMap({
             pathOptions={{ color: 'var(--primary)', dashArray: '6 6', weight: 2 }}
           >
             <Tooltip permanent direction="center" className="distance-tooltip" opacity={1}>
-              {routeMiles.toFixed(1)} mi
+              {routeMiles.toFixed(1)} km
             </Tooltip>
           </Polyline>
         )}
       </MapContainer>
 
-      {/* Floating pickup/dropoff switch — overlays the map instead of sitting above it */}
+      {/* Floating pickup/dropoff switch — right corner, spatially separated from "Clear pins"
+          on the right so the two control groups don't stack on short/mobile map heights
+          (PRD v5, Issue 7, matching PRD v4 Story 3.1's original placement) */}
       <div className="bg-card/90 absolute right-3 top-3 z-[1000] flex gap-1 rounded-lg border border-border p-1 shadow-md backdrop-blur">
         <Button
           type="button"
           variant="outline"
           size="sm"
-          className={switchButtonClass(activePin === 'pickup', 'success')}
+          className={switchButtonClass(activePin === 'pickup', 'pickup')}
           onClick={() => onActivePinChange('pickup')}
           disabled={disabled}
+          aria-pressed={activePin === 'pickup'}
         >
           Set Pickup
         </Button>
@@ -239,9 +247,10 @@ export function TripMap({
           type="button"
           variant="outline"
           size="sm"
-          className={switchButtonClass(activePin === 'dropoff', 'danger')}
+          className={switchButtonClass(activePin === 'dropoff', 'dropoff')}
           onClick={() => onActivePinChange('dropoff')}
           disabled={disabled}
+          aria-pressed={activePin === 'dropoff'}
         >
           Set Dropoff
         </Button>

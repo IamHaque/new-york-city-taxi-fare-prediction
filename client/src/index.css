@@ -70,6 +70,10 @@ input[type='datetime-local']::-webkit-calendar-picker-indicator {
     --brand-foreground: #241a04;
     --pickup: #0e9f6e;
     --dropoff: #e1355e;
+    /* Foreground for solid pickup/dropoff fills (the map switch buttons): dark ink reads
+       clearly on both hues in both themes, unlike white on dark theme's lighter tints. */
+    --pickup-foreground: #f2f3f6;
+    --dropoff-foreground: #f2f3f6;
     --chart-1: #2f6fed;
     --chart-2: #f5bb2e;
     --radius: 0.625rem;
@@ -105,6 +109,8 @@ input[type='datetime-local']::-webkit-calendar-picker-indicator {
     --brand-foreground: #241a04;
     --pickup: #34d399;
     --dropoff: #fb7185;
+    --pickup-foreground: #05321f;
+    --dropoff-foreground: #370612;
     --chart-1: #6f9bff;
     --chart-2: #f5bb2e;
   }

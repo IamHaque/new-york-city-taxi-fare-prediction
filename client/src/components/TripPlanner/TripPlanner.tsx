@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import type { ParsedTripDetails, PredictionResult, TripInput } from '@/types/trip';
 import { validateTripInputs, type ValidationErrors } from '@/utils/validators';
-import { decomposeDateTime } from '@/utils/dateTimeUtils';
+import { composeDateTime, decomposeDateTime } from '@/utils/dateTimeUtils';
 import { enrichParsedTripWithCoordinates, resolveLandmark } from '@/utils/landmarks';
 import { nearestLandmark, type Coordinate } from '@/utils/geo';
 import { reverseGeocode } from '@/utils/geocoding';
@@ -48,46 +48,66 @@ function formStateToTripInput(state: FormState): TripInput {
   };
 }
 
-function parsedTripToFormState(parsed: ParsedTripDetails): FormState {
-  const now = new Date();
-  const date = new Date(now.getFullYear(), parsed.month - 1, 1);
-  const targetJsDay = (parsed.day_of_week_num + 1) % 7;
-  const firstDayJsDay = date.getDay();
-  const offset = (targetJsDay - firstDayJsDay + 7) % 7;
-  date.setDate(date.getDate() + offset);
-  date.setHours(parsed.hour, 0, 0, 0);
+/** Valid ints only (mirrors validateTripInputs' ranges); anything else — null, '' , 0-out-of-
+ * range, NaN from a bad response — comes back null instead of poisoning the form. */
+function validInt(value: number | null | undefined, low: number, high: number): number | null {
+  return typeof value === 'number' && Number.isFinite(value) && value >= low && value <= high
+    ? Math.trunc(value)
+    : null;
+}
 
-  const datetime = date.toISOString().slice(0, 16);
+/**
+ * Maps a /parse-trip response onto full form state.
+ *
+ * Invariants (PRD v5 follow-up):
+ *  - The datetime input is ALWAYS rebuilt from the final hour/dow/month/year values via
+ *    composeDateTime, so it can never disagree with the decomposed fields next to it.
+ *  - Valid time fields in the response win; fields it didn't carry keep `current` values
+ *    (falling back to now when `current` holds an empty/invalid entry).
+ *  - A response with NO usable time resets the time fields to now instead of leaving the
+ *    previous trip's time on screen.
+ */
+function parsedTripToFormState(parsed: ParsedTripDetails, current: FormState): FormState {
+  const hour = validInt(parsed.hour, 0, 23);
+  const dayOfWeekNum = validInt(parsed.day_of_week_num, 0, 6);
+  const month = validInt(parsed.month, 1, 12);
+  const year = validInt(parsed.year, 1900, 2100);
+
+  const nowFields = getDefaultTimeFields();
+  const hasAnyTime = hour !== null || dayOfWeekNum !== null || month !== null || year !== null;
+
+  const merged: Pick<TripInput, 'hour' | 'day_of_week_num' | 'month' | 'year'> = hasAnyTime
+    ? {
+        hour: hour ?? (typeof current.hour === 'number' ? current.hour : nowFields.hour),
+        day_of_week_num:
+          dayOfWeekNum ??
+          (typeof current.day_of_week_num === 'number'
+            ? current.day_of_week_num
+            : nowFields.day_of_week_num),
+        month: month ?? (typeof current.month === 'number' ? current.month : nowFields.month),
+        year: year ?? (typeof current.year === 'number' ? current.year : nowFields.year),
+      }
+    : nowFields; // reset: no usable time in the response -> current date/time
 
   return {
     pickup_lat: parsed.pickup_lat ?? '',
     pickup_lon: parsed.pickup_lon ?? '',
     dropoff_lat: parsed.dropoff_lat ?? '',
     dropoff_lon: parsed.dropoff_lon ?? '',
-    datetime,
-    hour: parsed.hour,
-    day_of_week_num: parsed.day_of_week_num,
-    month: parsed.month,
-    year: parsed.year,
-    passenger_count: parsed.passenger_count,
+    datetime: composeDateTime(merged.year, merged.month, merged.day_of_week_num, merged.hour),
+    ...merged,
+    passenger_count: validInt(parsed.passenger_count, 1, 6) ?? current.passenger_count,
   };
 }
 
 /** Rebuilds full form state (incl. the datetime input) from a stored recent-estimate input. */
 function tripToFormState(trip: TripInput): FormState {
-  const date = new Date(0);
-  date.setFullYear(trip.year, trip.month - 1, 1);
-  const targetJsDay = (trip.day_of_week_num + 1) % 7;
-  const offset = (targetJsDay - date.getDay() + 7) % 7;
-  date.setDate(date.getDate() + offset);
-  date.setHours(trip.hour, 0, 0, 0);
-
   return {
     pickup_lat: trip.pickup_lat,
     pickup_lon: trip.pickup_lon,
     dropoff_lat: trip.dropoff_lat,
     dropoff_lon: trip.dropoff_lon,
-    datetime: date.toISOString().slice(0, 16),
+    datetime: composeDateTime(trip.year, trip.month, trip.day_of_week_num, trip.hour),
     hour: trip.hour,
     day_of_week_num: trip.day_of_week_num,
     month: trip.month,
@@ -102,11 +122,19 @@ function getDefaultDatetime(): string {
   return now.toISOString().slice(0, 16);
 }
 
-function getDefaultTimeFields(): Pick<FormState, 'hour' | 'day_of_week_num' | 'month' | 'year'> {
+function getDefaultTimeFields(): Pick<TripInput, 'hour' | 'day_of_week_num' | 'month' | 'year'> {
   return decomposeDateTime(getDefaultDatetime());
 }
 
 const EMPTY_ADDRESS: AddressState = { value: '', loading: false, error: false };
+
+/** Human labels for assumed_time_fields keys in the /parse-trip disclosure notice. */
+const TIME_FIELD_LABELS: Record<string, string> = {
+  hour: 'hour',
+  day_of_week_num: 'day of week',
+  month: 'month',
+  year: 'year',
+};
 
 /**
  * TripPlanner - the app's two-column, map-as-hero shell (PRD v4, Epic 2).
@@ -145,7 +173,6 @@ export function TripPlanner({ onChartContextChange }: TripPlannerProps) {
     {}
   );
 
-  const [parsedTrip, setParsedTrip] = useState<ParsedTripDetails | null>(null);
   const [activePin, setActivePin] = useState<ActivePin>('pickup');
   const [pickupAddress, setPickupAddress] = useState<AddressState>(EMPTY_ADDRESS);
   const [dropoffAddress, setDropoffAddress] = useState<AddressState>(EMPTY_ADDRESS);
@@ -296,11 +323,19 @@ export function TripPlanner({ onChartContextChange }: TripPlannerProps) {
   // ---- Pin changes (map click / drag / clear / landmark chip) -----------------
 
   function handlePickupChange(coord: Coordinate | null, reestimate?: boolean) {
+    // Functional update: never clobbers other fields, even if this fires in the same batch
+    // as another setValues (the old spread-of-stale-values bug behind "Clear pins" only
+    // clearing the dropoff).
+    setValues((prev) =>
+      coord
+        ? { ...prev, pickup_lat: coord.lat, pickup_lon: coord.lon }
+        : { ...prev, pickup_lat: '', pickup_lon: '' }
+    );
+    if (coord) setTouched((prev) => ({ ...prev, pickup_lat: true, pickup_lon: true }));
+
     const next: FormState = coord
       ? { ...values, pickup_lat: coord.lat, pickup_lon: coord.lon }
       : { ...values, pickup_lat: '', pickup_lon: '' };
-    setValues(next);
-    if (coord) setTouched((prev) => ({ ...prev, pickup_lat: true, pickup_lon: true }));
     setErrors(validateTripInputs(toTripInputPartial(next)));
 
     // Drag → re-estimate only when both pins exist (Story 4.3's gate); a plain click or a
@@ -310,15 +345,38 @@ export function TripPlanner({ onChartContextChange }: TripPlannerProps) {
   }
 
   function handleDropoffChange(coord: Coordinate | null, reestimate?: boolean) {
+    setValues((prev) =>
+      coord
+        ? { ...prev, dropoff_lat: coord.lat, dropoff_lon: coord.lon }
+        : { ...prev, dropoff_lat: '', dropoff_lon: '' }
+    );
+    if (coord) setTouched((prev) => ({ ...prev, dropoff_lat: true, dropoff_lon: true }));
+
     const next: FormState = coord
       ? { ...values, dropoff_lat: coord.lat, dropoff_lon: coord.lon }
       : { ...values, dropoff_lat: '', dropoff_lon: '' };
-    setValues(next);
-    if (coord) setTouched((prev) => ({ ...prev, dropoff_lat: true, dropoff_lon: true }));
     setErrors(validateTripInputs(toTripInputPartial(next)));
 
     const bothPinsSet = next.pickup_lat !== '' && next.dropoff_lat !== '';
     if (reestimate && bothPinsSet) void runEstimate(next);
+  }
+
+  /**
+   * "Clear pins" — one atomic setValues wiping BOTH sides (plus validation state), so the
+   * pickup can't survive the clear the way it did when this went through two sequential
+   * per-side handlers that each closed over the same stale `values`.
+   */
+  function handleClearPins() {
+    if (isLoading) return;
+    setValues((prev) => ({
+      ...prev,
+      pickup_lat: '',
+      pickup_lon: '',
+      dropoff_lat: '',
+      dropoff_lon: '',
+    }));
+    setErrors({});
+    setTouched({});
   }
 
   function handleLandmarkClick(name: string) {
@@ -342,10 +400,26 @@ export function TripPlanner({ onChartContextChange }: TripPlannerProps) {
 
     try {
       const parsed = await parseTrip(trimmed);
-      // Prefill map + form fields via the parsedTrip effect below, whatever happens next.
-      setParsedTrip(parsed);
-
       const enriched = enrichParsedTripWithCoordinates(parsed);
+
+      // Prefill map + form BEFORE any early return, so the unresolved-landmark warning path
+      // also fills what did parse. parsedTripToFormState rebuilds the datetime input from the
+      // returned time fields, keeping the datetime string and the hour/dow/month/year fields
+      // in lockstep (valid response -> updated; no usable time -> reset to now).
+      const formState = parsedTripToFormState(enriched, values);
+      setValues(formState);
+      setErrors({});
+      setTouched({});
+
+      // Assumed-time disclosure (server listed every field it filled with the current date).
+      const assumedFields = parsed.assumed_time_fields ?? [];
+      const assumptionNote =
+        assumedFields.length > 0
+          ? `No time stated in the text - filled in with the current date/time for ${assumedFields
+              .map((field) => TIME_FIELD_LABELS[field] ?? field)
+              .join(', ')}.`
+          : null;
+
       const pickupOk =
         typeof enriched.pickup_lat === 'number' && typeof enriched.pickup_lon === 'number';
       const dropoffOk =
@@ -353,17 +427,37 @@ export function TripPlanner({ onChartContextChange }: TripPlannerProps) {
 
       if (!pickupOk || !dropoffOk) {
         // The real landmark-coverage limitation (PRD v4 §1): explain which side failed and
-        // ask for a manual pin instead of silently doing nothing.
+        // ask for a manual pin instead of silently doing nothing. Names can be null when the
+        // description had no recognizable place for that side — say "pickup location" then
+        // rather than printing the string "null". The client-built error supersedes the
+        // server's `warning` here (it names the side AND the unrecognized text), so only the
+        // assumption disclosure rides along in the notice.
         const missing: string[] = [];
-        if (!pickupOk) missing.push(`pickup "${parsed.pickup_landmark}"`);
-        if (!dropoffOk) missing.push(`drop-off "${parsed.dropoff_landmark}"`);
+        if (!pickupOk) {
+          missing.push(
+            parsed.pickup_landmark ? `pickup "${parsed.pickup_landmark}"` : 'pickup location'
+          );
+        }
+        if (!dropoffOk) {
+          missing.push(
+            parsed.dropoff_landmark ? `drop-off "${parsed.dropoff_landmark}"` : 'drop-off location'
+          );
+        }
         setDescribeError(
           `Couldn't resolve the ${missing.join(' or the ')}. Place that pin on the map manually — the rest of your trip is filled in.`
         );
+        if (assumptionNote) setDescribeNotice(assumptionNote);
         return;
       }
 
-      const formState = parsedTripToFormState(enriched);
+      // Both sides resolved: surface any server warning (only possible if the server and
+      // client landmark tables disagree) plus the assumed-time disclosure — never both
+      // warning texts at once.
+      const notes: string[] = [];
+      if (parsed.warning) notes.push(parsed.warning);
+      if (assumptionNote) notes.push(assumptionNote);
+      if (notes.length > 0) setDescribeNotice(notes.join(' '));
+
       const trip = formStateToTripInput(formState);
       setLastTrip(trip);
 
@@ -381,8 +475,6 @@ export function TripPlanner({ onChartContextChange }: TripPlannerProps) {
         const prediction = await predict(trip);
         if (prediction) appendRecentEstimate(trip, prediction);
       }
-
-      if (parsed.warning) setDescribeNotice(parsed.warning);
     } catch (err) {
       setDescribeError(
         err instanceof Error
@@ -459,17 +551,7 @@ export function TripPlanner({ onChartContextChange }: TripPlannerProps) {
     }
   }
 
-  // ---- Parsed-trip prefill (moved from TripDetails.tsx) -----------------------
-
-  useEffect(() => {
-    if (parsedTrip && Object.keys(parsedTrip).length > 0) {
-      const enriched = enrichParsedTripWithCoordinates(parsedTrip);
-      const formState = parsedTripToFormState(enriched);
-      setValues(formState);
-      setErrors({});
-      setTouched({});
-    }
-  }, [parsedTrip]);
+  // ---- Parsed-trip prefill happens inline in handleEstimateFromText --------------
 
   const displayHour = typeof values.hour === 'number' ? values.hour : undefined;
 
@@ -489,6 +571,7 @@ export function TripPlanner({ onChartContextChange }: TripPlannerProps) {
           dropoff={dropoffCoord}
           onPickupChange={handlePickupChange}
           onDropoffChange={handleDropoffChange}
+          onClearPins={handleClearPins}
           activePin={activePin}
           onActivePinChange={setActivePin}
           disabled={isLoading}

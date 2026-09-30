@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import joblib
@@ -88,15 +90,74 @@ def predict():
         return jsonify({"error": str(e)}), 500
 
 
+def resolve_time_fields(parsed_data, now=None):
+    """
+    Completes the possibly-null time fields the LLM extracted, per the /parse-trip contract:
+    the model only echoes what the text literally says (null otherwise) — filling unstated
+    fields is this server's job, because only the server knows the real current date/time.
+
+    Precedence, applied per field:
+      1. explicit value extracted from the text (hour/day_of_week_num/month/year),
+      2. relative_day ('today'|'tomorrow'|'yesterday') resolved against `now` for
+         day_of_week_num/month/year,
+      3. `now` itself.
+
+    Fields that fell through to step 3 are reported in the returned assumed list so the client
+    can disclose the assumption instead of silently showing a fabricated time.
+
+    Returns (fields, assumed_time_fields) where fields keys are
+    hour/day_of_week_num/month/year, all guaranteed valid ints.
+    """
+    now = now or datetime.now()
+
+    relative_base = {
+        'today': now,
+        'tomorrow': now + timedelta(days=1),
+        'yesterday': now - timedelta(days=1),
+    }.get(parsed_data.get('relative_day'))
+
+    relative_values = {}
+    if relative_base is not None:
+        relative_values = {
+            'day_of_week_num': relative_base.weekday(),
+            'month': relative_base.month,
+            'year': relative_base.year,
+        }
+
+    now_values = {
+        'hour': now.hour,
+        'day_of_week_num': now.weekday(),
+        'month': now.month,
+        'year': now.year,
+    }
+
+    fields = {}
+    assumed_time_fields = []
+    for key in ('hour', 'day_of_week_num', 'month', 'year'):
+        explicit = parsed_data.get(key)
+        if explicit is not None:
+            fields[key] = explicit
+        elif key in relative_values:
+            fields[key] = relative_values[key]
+        else:
+            fields[key] = now_values[key]
+            assumed_time_fields.append(key)
+
+    return fields, assumed_time_fields
+
+
 @app.route('/parse-trip', methods=['POST'])
 def parse_trip():
     """
     Turns a free-text trip description into a fare prediction in one round trip:
-      1. Ollama extracts structured fields (landmark names + decomposed time fields).
-      2. Each landmark name is resolved to coordinates via scripts.shared.landmarks.
-      3. If BOTH sides resolve, the same run_model_prediction() path /predict uses is called,
+      1. Ollama extracts structured fields (landmark names + decomposed time fields). Values the
+         text does not state come back as null — the model never invents them.
+      2. Time fields are completed server-side (explicit text > relative_day > now) and the
+         fields that defaulted to now are listed in assumed_time_fields for the client to disclose.
+      3. Each landmark name is resolved to coordinates via scripts.shared.landmarks.
+      4. If BOTH sides resolve, the same run_model_prediction() path /predict uses is called,
          and fare_amount/distance_km are included in the response alongside the parsed fields.
-      4. If EITHER side fails to resolve, the parsed fields are still returned (so the client can
+      5. If EITHER side fails to resolve, the parsed fields are still returned (so the client can
          still pre-fill the form/map) but with no fare_amount/distance_km, plus a 'warning'
          explaining which side needs to be placed manually. This is a 200, not an error — parsing
          partially succeeded, and failing loudly here would throw away the fields that DID parse.
@@ -108,23 +169,36 @@ def parse_trip():
 
         user_text = req_json['description']
 
-        # Step 1: LLM extraction (landmark names + hour/day_of_week_num/month/year/passenger_count)
+        # Step 1: LLM extraction (landmark names + possibly-null time fields)
         parsed_data = parse_trip_description_via_llm(user_text)
         response = dict(parsed_data)
 
-        # Step 2: resolve landmark names -> coordinates
-        pickup_coord = resolve_landmark(parsed_data.get('pickup_landmark'))
-        dropoff_coord = resolve_landmark(parsed_data.get('dropoff_landmark'))
+        # Step 2: complete the time fields before anything downstream can see them — both the
+        # warning path and the model input below are guaranteed valid ints from here on.
+        time_fields, assumed_time_fields = resolve_time_fields(parsed_data)
+        response.update(time_fields)
+        response['assumed_time_fields'] = assumed_time_fields
+
+        # passenger_count: the LLM leaves it null unless the text states one; default to 1
+        # (the common case) rather than feeding the model a missing value.
+        if response.get('passenger_count') is None:
+            response['passenger_count'] = MIN_PASSENGERS
+
+        # relative_day was only needed to resolve the date server-side; keep the response
+        # contract to the documented fields.
+        response.pop('relative_day', None)
+
+        # Step 3: resolve landmark names -> coordinates
+        pickup_coord = resolve_landmark(response.get('pickup_landmark'))
+        dropoff_coord = resolve_landmark(response.get('dropoff_landmark'))
         response['pickup_resolved'] = pickup_coord is not None
         response['dropoff_resolved'] = dropoff_coord is not None
 
-        # The LLM is free-text extraction and can return a passenger_count outside the range the
-        # model was trained on ([1, 6], see validateTripInputs on the client) — clamp it rather
-        # than feeding the model an out-of-distribution value.
-        if 'passenger_count' in response and response['passenger_count'] is not None:
-            response['passenger_count'] = int(
-                np.clip(response['passenger_count'], MIN_PASSENGERS, MAX_PASSENGERS)
-            )
+        # Belt-and-braces: sanitize_extracted_trip already bounds passenger_count to
+        # [MIN_PASSENGERS, MAX_PASSENGERS]; clamp again before it reaches the model.
+        response['passenger_count'] = int(
+            np.clip(response['passenger_count'], MIN_PASSENGERS, MAX_PASSENGERS)
+        )
 
         if pickup_coord is None or dropoff_coord is None:
             unresolved = [
@@ -138,7 +212,7 @@ def parse_trip():
             )
             return jsonify(response)
 
-        # Step 3: both sides resolved — build the same row shape /predict expects and run
+        # Step 4: both sides resolved — build the same row shape /predict expects and run
         # inference through the identical code path, so this fare is computed exactly the way a
         # manually-submitted /predict call would compute it.
         response['pickup_lat'], response['pickup_lon'] = pickup_coord
